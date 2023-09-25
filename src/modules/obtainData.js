@@ -1,29 +1,7 @@
 const fs = require('fs');
-const puppeteer = require('puppeteer-extra');
+const puppeteer = require('puppeteer-extra')
 
-const { obtainData } = require("../modules/obtainData");
-
-module.exports.getBooks = async function (req, res) {
-  console.log('getBooks');
-
-  res.status(200).json({
-    message: 'okkk!'
-  })
-  // try {
-  //   const allBooks = await Book.find();
-  //   res.status(200).json(allBooks);
-  // } catch(err) {
-  //   res.status(404).json({
-  //     message: 'an error occured!'
-  //   })
-  // }     
-};
-
-module.exports.postBook = async function (req, res) {
-  console.log('postBook------', req.body.link);
-
-
-  //----------------------------------------------------------------------------------------
+const obtainData = async () => {
 
   // add stealth plugin and use defaults (all evasion techniques)
   const StealthPlugin = require('puppeteer-extra-plugin-stealth')
@@ -145,62 +123,9 @@ module.exports.postBook = async function (req, res) {
     })
     //await browser.close()
     console.log(`All done`)
-
-    try {
-      console.log('obtainData------')
-
-      res.status(201).json({
-        result: dataFromAllPages
-      });
-
-    } catch (err) {
-      res.status(400).json({
-        message: 'error occured'
-      })
-    }
   })
 
 
+}
 
-  //---------------------------------------------------------------------------------------
-
-
-
-
-};
-
-module.exports.deleteBook = async function (req, res) {
-  console.log('deleteBook------');
-
-  // try {
-  //   // check is this book in DB 
-  // const isBookInDB = await Book.findOne({_id: req.params.id});
-  // if (!isBookInDB) {
-  //   res.status(404).json({
-  //     message: 'this book is not in DB!'
-  //   })
-  // } else { //delete book
-  //   await Book.deleteOne({ _id: req.params.id });
-  //   res.status(200).json(`${isBookInDB.name} is deleted`);
-  // }
-  // } catch(err) {
-  //   res.status(404).json({
-  //     message: 'error occured!'
-  //   })
-  // }     
-};
-
-
-module.exports.updateBook = async function (req, res) {
-  console.log('updateBook------');
-
-
-  // try {
-  //    const result = await Book.findOneAndUpdate({ _id: req.params.id }, { name: req.body.name }, { new: true });
-  //    res.status(200).json(`Book has been updated, new book name is: ${result.name} `);
-  // } catch {
-  //     res.status(400).json({
-  //     message: 'error occured'
-  //     })
-  //   }
-};
+module.exports = obtainData;
