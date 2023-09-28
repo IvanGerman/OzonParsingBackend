@@ -43,12 +43,12 @@ module.exports.postBook = async function (req, res) {
     console.log('Running tests..');
     const page = await browser.newPage();
 
-    // await page.goto('https://www.ozon.ru/category/pelenki-meditsinskie-6246/?category_was_predicted=true&deny_category_prediction=true&from_global=true&text=%D0%BF%D1%80%D0%BE%D1%81%D1%82%D1%8B%D0%BD%D0%B8+%D0%BE%D0%B4%D0%BD%D0%BE%D1%80%D0%B0%D0%B7%D0%BE%D0%B2%D1%8B%D0%B5', {
-    //   waitUntil: 'load'
-    // });
-    await page.goto('https://www.ozon.ru/brand/soul-way-100258413/', {
+    await page.goto('https://www.ozon.ru/brand/natura-spa-100790981/', {
       waitUntil: 'load'
     });
+    // await page.goto('https://www.ozon.ru/brand/soul-way-100258413/', {
+    //   waitUntil: 'load'
+    // });
 
 
     let isItLastPage = false;
@@ -59,7 +59,7 @@ module.exports.postBook = async function (req, res) {
 
       const getDataFromPage = await page.evaluate(() => {
 
-        const allBonusSpans = document.querySelectorAll('.iv9 .i2.j0.j2.a0i span');
+        const allBonusSpans = document.querySelectorAll('.wi3 .i2.j0.j2.ai1 span');
         console.log('allBonusSpans--', allBonusSpans);
         let hrefArr = [];
         let linksArr = [];
@@ -101,13 +101,13 @@ module.exports.postBook = async function (req, res) {
 
       i += 1;
       console.log('iiiiiiiii---', i);
-      if (i === 55) { break }
+      if (i === 24) { break }
 
       await page.waitForTimeout(5000);
       getDataMain();
 
       // to do - click only forward button
-      const pageNavBtns = await page.$$('a.a2423-a4');
+      const pageNavBtns = await page.$$('a.a2425-a4');
       if (pageNavBtns.length === 2 || pageNavBtns.length === 1) {
         await pageNavBtns[0].click();
       } else {
@@ -116,11 +116,11 @@ module.exports.postBook = async function (req, res) {
 
       console.log('pageNavBtns---', pageNavBtns[0]);
 
-      //await page.click('a.a2423-a4');
+      //await page.click('a.a2425-a4');
       console.log(dataFromAllPages);
 
       try {
-        await page.waitForSelector('a.a2423-a4');
+        await page.waitForSelector('a.a2425-a4');
       } catch (error) {
         console.log('errorhandling');
         getDataMain();
@@ -128,7 +128,7 @@ module.exports.postBook = async function (req, res) {
       }
 
 
-      isItLastPage = (await page.$('a.a2423-a4')) === null;
+      isItLastPage = (await page.$('a.a2425-a4')) === null;
       console.log('isItLastPage---', isItLastPage);
 
       if (isItLastPage === true) {
@@ -139,9 +139,22 @@ module.exports.postBook = async function (req, res) {
       }
     }
 
+    //here we take items which bonusValue is bigger than the price of the item
+    const goldenItems = [];
+    dataFromAllPages.forEach((item) => {
+      if ( item.bonusValue > item.productPrice ) {
+        goldenItems.push(item);
+      };
+    });
+    fs.writeFile('goldenItemsResult.json', JSON.stringify(goldenItems, null, 2), (err) => {
+      if (err) { throw err };
+      console.log('goldenItemsResult.json saved');
+    })
+
+
     fs.writeFile('obtainDataResult.json', JSON.stringify(dataFromAllPages, null, 2), (err) => {
       if (err) { throw err };
-      console.log('file saved');
+      console.log('obtainDataResult.json saved');
     })
     //await browser.close()
     console.log(`All done`)
