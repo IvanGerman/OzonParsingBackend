@@ -43,12 +43,13 @@ module.exports.postBook = async function (req, res) {
     console.log('Running tests..');
     const page = await browser.newPage();
 
-    await page.goto('https://www.ozon.ru/brand/natura-spa-100790981/', {
+    await page.goto('https://www.ozon.ru/category/shayby-i-gayki-9796/?category_was_predicted=true&deny_category_prediction=true&from_global=true&text=%D0%B3%D0%B0%D0%B9%D0%BA%D0%B0+%D0%BC10', {
       waitUntil: 'load'
     });
     // await page.goto('https://www.ozon.ru/brand/soul-way-100258413/', {
     //   waitUntil: 'load'
     // });
+    //https://www.ozon.ru/category/shayby-i-gayki-9796/?category_was_predicted=true&deny_category_prediction=true&from_global=true&text=%D0%B3%D0%B0%D0%B9%D0%BA%D0%B0+%D0%BC10
 
 
     let isItLastPage = false;
@@ -59,7 +60,7 @@ module.exports.postBook = async function (req, res) {
 
       const getDataFromPage = await page.evaluate(() => {
 
-        const allBonusSpans = document.querySelectorAll('.wi3 .i2.j0.j2.ai1 span');
+        const allBonusSpans = document.querySelectorAll('.i3w .i2.j0.j2.ai1 span');
         console.log('allBonusSpans--', allBonusSpans);
         let hrefArr = [];
         let linksArr = [];
@@ -101,7 +102,7 @@ module.exports.postBook = async function (req, res) {
 
       i += 1;
       console.log('iiiiiiiii---', i);
-      if (i === 24) { break }
+      if (i === 20) { break }
 
       await page.waitForTimeout(5000);
       getDataMain();
@@ -138,6 +139,11 @@ module.exports.postBook = async function (req, res) {
         break;
       }
     }
+    
+    //sorting dataFromAllPages in order of items with biggest positive difference between bonusValue and price at start (descending order)
+    const points = [40, 100, 1, 5, 25, 10];
+    points.sort(function(a, b){return b-a});
+    
 
     //here we take items which bonusValue is bigger than the price of the item
     const goldenItems = [];
