@@ -1,3 +1,20 @@
+///file not to run, deprecated
+///file not to run, deprecated
+///file not to run, deprecated
+///file not to run, deprecated
+///file not to run, deprecated
+///file not to run, deprecated
+///file not to run, deprecated
+///file not to run, deprecated
+///file not to run, deprecated
+///file not to run, deprecated
+///file not to run, deprecated
+
+
+
+
+
+
 const fs = require('fs');
 const puppeteer = require('puppeteer-extra')
 
@@ -20,11 +37,12 @@ const obtainData = async () => {
   }).then(async browser => {
     console.log('Running tests..');
     const page = await browser.newPage();
+    let xxx = 'https://www.ozon.ru/brand/soul-way-100258413/'
 
-    // await page.goto('https://www.ozon.ru/category/pelenki-meditsinskie-6246/?category_was_predicted=true&deny_category_prediction=true&from_global=true&text=%D0%BF%D1%80%D0%BE%D1%81%D1%82%D1%8B%D0%BD%D0%B8+%D0%BE%D0%B4%D0%BD%D0%BE%D1%80%D0%B0%D0%B7%D0%BE%D0%B2%D1%8B%D0%B5', {
+    // await page.goto('https://www.ozon.ru/highlight/tovary-kampanii-rasprodazha-stoka-auto-1024701/?tf_state=dewhO0LbT9QTptHkpZB48XpyM5qN0RIjsJl9YtAqfbI2bbkDvzsi7DGhaZgZvSTstOaAnXKnSACPnMWhIgdvKOz1oV8hrMSp7Ir9XMOUUhCCbJfmQ0oWHeejn3JU0LhGFS9CyjEfgFvJ5NAqcYnPEW2ddnZ12jwojKHH0s4Ub9mlgsRrq24N6BzMn9hwgKIZTmg7x_p3VJIwvzIbDxSDQUtF3GFl2lg%3D', {
     //   waitUntil: 'load'
     // });
-    await page.goto('https://www.ozon.ru/brand/soul-way-100258413/', {
+    await page.goto(xxx, {
       waitUntil: 'load'
     });
 
@@ -78,8 +96,8 @@ const obtainData = async () => {
     while (isItLastPage !== true) {
 
       i += 1;
-      console.log('iiiiiiiii---', i);
-      if (i === 55) { break }
+      console.log('kkkkkkk---', i, xxx);
+      if (i === 22) { break }
 
       await page.waitForTimeout(5000);
       getDataMain();

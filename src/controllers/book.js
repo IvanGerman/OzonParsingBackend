@@ -20,7 +20,7 @@ module.exports.getBooks = async function (req, res) {
 };
 
 module.exports.postBook = async function (req, res) {
-  console.log('postBook------', req.body.link);
+  console.log('postBookkkk------', req.body.link);
 
 
   //----------------------------------------------------------------------------------------
@@ -43,14 +43,15 @@ module.exports.postBook = async function (req, res) {
     console.log('Running tests..');
     const page = await browser.newPage();
 
-    await page.goto('https://www.ozon.ru/category/shayby-i-gayki-9796/?category_was_predicted=true&deny_category_prediction=true&from_global=true&text=%D0%B3%D0%B0%D0%B9%D0%BA%D0%B0+%D0%BC10', {
+    await page.goto('https://www.ozon.ru/brand/natura-spa-100790981/', {
       waitUntil: 'load'
     });
     // await page.goto('https://www.ozon.ru/brand/soul-way-100258413/', {
     //   waitUntil: 'load'
     // });
-    //https://www.ozon.ru/category/shayby-i-gayki-9796/?category_was_predicted=true&deny_category_prediction=true&from_global=true&text=%D0%B3%D0%B0%D0%B9%D0%BA%D0%B0+%D0%BC10
 
+    // const html = await page.content()
+    // console.log('html---',html)
 
     let isItLastPage = false;
     var i = 0;
@@ -60,15 +61,17 @@ module.exports.postBook = async function (req, res) {
 
       const getDataFromPage = await page.evaluate(() => {
 
-        const allBonusSpans = document.querySelectorAll('.i3w .i2.j0.j2.ai1 span');
-        console.log('allBonusSpans--', allBonusSpans);
+        const allBonusSpans = document.querySelectorAll('.wi4 .i2.j0.j2.ai1 span');
+        
+        alert(allBonusSpans.length)
+        //allBonusSpans.forEach((span) => { alert(span.innerText)})
         let hrefArr = [];
         let linksArr = [];
         let singleProductData = {};
-        Array.from(allBonusSpans).forEach(bonusSpan => {
-          if (bonusSpan.innerText.includes('отзыв')) {
+        Array.from(allBonusSpans).forEach(bonusSpan => { 
+          if (bonusSpan.innerText.includes('за отзыв')) { alert(bonusSpan.innerText)
             hrefArr.push(bonusSpan.innerText);
-            let linkParentOfItem = bonusSpan.closest('a');
+            let linkParentOfItem = bonusSpan.closest('a'); alert(Boolean(linkParentOfItem))
             if (linkParentOfItem) {
 
               let productTitle = linkParentOfItem.nextElementSibling.children[2].firstChild.firstChild.innerText;
@@ -108,7 +111,11 @@ module.exports.postBook = async function (req, res) {
       getDataMain();
 
       // to do - click only forward button
-      const pageNavBtns = await page.$$('a.a2425-a4');
+      
+      const pageNavBtns = await page.$$('a.a2427-a4');
+    
+      
+      console.log('pageNavBtnslength---', pageNavBtns.length);
       if (pageNavBtns.length === 2 || pageNavBtns.length === 1) {
         await pageNavBtns[0].click();
       } else {
@@ -121,15 +128,18 @@ module.exports.postBook = async function (req, res) {
       console.log(dataFromAllPages);
 
       try {
-        await page.waitForSelector('a.a2425-a4');
+        await page.waitForSelector('a.a2427-a4');
       } catch (error) {
         console.log('errorhandling');
+        
         getDataMain();
+        console.log('errorhandling222');
+        await page.waitForTimeout(5000);
         break;
       }
 
 
-      isItLastPage = (await page.$('a.a2425-a4')) === null;
+      isItLastPage = (await page.$$('a.a2427-a4')) === null;
       console.log('isItLastPage---', isItLastPage);
 
       if (isItLastPage === true) {
@@ -141,8 +151,8 @@ module.exports.postBook = async function (req, res) {
     }
     
     //sorting dataFromAllPages in order of items with biggest positive difference between bonusValue and price at start (descending order)
-    const points = [40, 100, 1, 5, 25, 10];
-    points.sort(function(a, b){return b-a});
+    //const points = [40, 100, 1, 5, 25, 10];
+    //points.sort(function(a, b){return b-a});
     
 
     //here we take items which bonusValue is bigger than the price of the item
@@ -166,7 +176,7 @@ module.exports.postBook = async function (req, res) {
     console.log(`All done`)
 
     try {
-      console.log('obtainData------')
+      console.log('sending response------')
 
       res.status(201).json({
         result: dataFromAllPages
