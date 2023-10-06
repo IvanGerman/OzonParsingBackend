@@ -31,7 +31,6 @@ module.exports.postBook = async function (req, res) {
 
   var dataFromAllPages = [];
 
-  // puppeteer usage as normal
   puppeteer.launch({
     headless: false,
     executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe',
@@ -43,7 +42,7 @@ module.exports.postBook = async function (req, res) {
     console.log('Running tests..');
     const page = await browser.newPage();
 
-    await page.goto('https://www.ozon.ru/brand/natura-spa-100790981/', {
+    await page.goto('https://www.ozon.ru/brand/ogorodnik-tsvetovod-87369824/', {
       waitUntil: 'load'
     });
     // await page.goto('https://www.ozon.ru/brand/soul-way-100258413/', {
@@ -53,25 +52,21 @@ module.exports.postBook = async function (req, res) {
     // const html = await page.content()
     // console.log('html---',html)
 
-    let isItLastPage = false;
     var i = 0;
 
     const getDataMain = async () => {
-      //await page.waitForTimeout(5000);
 
       const getDataFromPage = await page.evaluate(() => {
 
         const allBonusSpans = document.querySelectorAll('.wi4 .i2.j0.j2.ai1 span');
         
-        alert(allBonusSpans.length)
-        //allBonusSpans.forEach((span) => { alert(span.innerText)})
         let hrefArr = [];
         let linksArr = [];
         let singleProductData = {};
         Array.from(allBonusSpans).forEach(bonusSpan => { 
-          if (bonusSpan.innerText.includes('за отзыв')) { alert(bonusSpan.innerText)
+          if (bonusSpan.innerText.includes('за отзыв')) { 
             hrefArr.push(bonusSpan.innerText);
-            let linkParentOfItem = bonusSpan.closest('a'); alert(Boolean(linkParentOfItem))
+            let linkParentOfItem = bonusSpan.closest('a'); 
             if (linkParentOfItem) {
 
               let productTitle = linkParentOfItem.nextElementSibling.children[2].firstChild.firstChild.innerText;
@@ -101,51 +96,29 @@ module.exports.postBook = async function (req, res) {
     }
 
 
-    while (isItLastPage !== true) {
+    while (true) {
 
       i += 1;
-      console.log('iiiiiiiii---', i);
       if (i === 20) { break }
 
       await page.waitForTimeout(5000);
       getDataMain();
-
-      // to do - click only forward button
       
       const pageNavBtns = await page.$$('a.a2427-a4');
-    
-      
-      console.log('pageNavBtnslength---', pageNavBtns.length);
       if (pageNavBtns.length === 2 || pageNavBtns.length === 1) {
         await pageNavBtns[0].click();
       } else {
         await pageNavBtns[1].click()
       }
 
-      console.log('pageNavBtns---', pageNavBtns[0]);
-
-      //await page.click('a.a2425-a4');
       console.log(dataFromAllPages);
 
       try {
         await page.waitForSelector('a.a2427-a4');
       } catch (error) {
-        console.log('errorhandling');
-        
-        getDataMain();
+        console.log('errorhandling111');
+        await getDataMain();
         console.log('errorhandling222');
-        await page.waitForTimeout(5000);
-        break;
-      }
-
-
-      isItLastPage = (await page.$$('a.a2427-a4')) === null;
-      console.log('isItLastPage---', isItLastPage);
-
-      if (isItLastPage === true) {
-        console.log('last page to get data');
-        await page.waitForTimeout(5000);
-        getDataMain();
         break;
       }
     }
