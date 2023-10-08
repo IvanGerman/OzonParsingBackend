@@ -2,6 +2,7 @@ const fs = require('fs');
 const puppeteer = require('puppeteer-extra');
 
 const { obtainData } = require("../modules/obtainData");
+const { resolve } = require('path');
 
 module.exports.getBooks = async function (req, res) {
   console.log('getBooks');
@@ -42,13 +43,23 @@ module.exports.postBook = async function (req, res) {
     console.log('Running tests..');
     const page = await browser.newPage();
 
-    await page.goto('https://www.ozon.ru/brand/ogorodnik-tsvetovod-87369824/', {
+    await page.goto('https://www.ozon.ru/highlight/tovary-kampanii-rasprodazha-stoka-auto-1024701/', {
       waitUntil: 'load'
     });
     // await page.goto('https://www.ozon.ru/brand/soul-way-100258413/', {
     //   waitUntil: 'load'
     // });
 
+    const doInfiniteScroll = async (page) => {
+      for (let i = 0; i < 5; i += 1) {
+        let previousHeight = await page.evaluate('document.body.scrollHeight');
+        await page.evaluate('window.scrollTo(0, document.body.scrollHeight)');
+        await page.evaluate('alert(document.body.scrollHeight)');
+        await page.waitForFunction(`document.body.scrollHeight > ${previousHeight}`);
+        await new Promise((resolve) => { setTimeout(resolve, 1000) });
+      };
+    };
+    await doInfiniteScroll(page);
     // const html = await page.content()
     // console.log('html---',html)
 
@@ -59,14 +70,14 @@ module.exports.postBook = async function (req, res) {
       const getDataFromPage = await page.evaluate(() => {
 
         const allBonusSpans = document.querySelectorAll('.wi4 .i2.j0.j2.ai1 span');
-        
+
         let hrefArr = [];
         let linksArr = [];
         let singleProductData = {};
-        Array.from(allBonusSpans).forEach(bonusSpan => { 
-          if (bonusSpan.innerText.includes('за отзыв')) { 
+        Array.from(allBonusSpans).forEach(bonusSpan => {
+          if (bonusSpan.innerText.includes('за отзыв')) {
             hrefArr.push(bonusSpan.innerText);
-            let linkParentOfItem = bonusSpan.closest('a'); 
+            let linkParentOfItem = bonusSpan.closest('a');
             if (linkParentOfItem) {
 
               let productTitle = linkParentOfItem.nextElementSibling.children[2].firstChild.firstChild.innerText;
@@ -103,12 +114,14 @@ module.exports.postBook = async function (req, res) {
 
       await page.waitForTimeout(5000);
       getDataMain();
-      
+
       const pageNavBtns = await page.$$('a.a2427-a4');
       if (pageNavBtns.length === 2 || pageNavBtns.length === 1) {
         await pageNavBtns[0].click();
+        await doInfiniteScroll(page);
       } else {
-        await pageNavBtns[1].click()
+        await pageNavBtns[1].click();
+        await doInfiniteScroll(page);
       }
 
       console.log(dataFromAllPages);
@@ -122,16 +135,16 @@ module.exports.postBook = async function (req, res) {
         break;
       }
     }
-    
+
     //sorting dataFromAllPages in order of items with biggest positive difference between bonusValue and price at start (descending order)
     //const points = [40, 100, 1, 5, 25, 10];
     //points.sort(function(a, b){return b-a});
-    
+
 
     //here we take items which bonusValue is bigger than the price of the item
     const goldenItems = [];
     dataFromAllPages.forEach((item) => {
-      if ( item.bonusValue > item.productPrice ) {
+      if (item.bonusValue > item.productPrice) {
         goldenItems.push(item);
       };
     });
