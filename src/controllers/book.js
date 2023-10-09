@@ -43,9 +43,13 @@ module.exports.postBook = async function (req, res) {
     console.log('Running tests..');
     const page = await browser.newPage();
 
-    await page.goto('https://www.ozon.ru/highlight/tovary-kampanii-rasprodazha-stoka-auto-1024701/', {
+    
+    await page.goto('https://www.ozon.ru/category/muzhskaya-odezhda-7542/?opened=setapparel&setapparel=175528%2C175542', {
       waitUntil: 'load'
     });
+    // await page.goto('https://www.ozon.ru/highlight/tovary-kampanii-rasprodazha-stoka-auto-1024701/', {
+    //   waitUntil: 'load'
+    // });
     // await page.goto('https://www.ozon.ru/brand/soul-way-100258413/', {
     //   waitUntil: 'load'
     // });
@@ -59,7 +63,7 @@ module.exports.postBook = async function (req, res) {
         await new Promise((resolve) => { setTimeout(resolve, 1000) });
       };
     };
-    await doInfiniteScroll(page);
+    //await doInfiniteScroll(page);
     // const html = await page.content()
     // console.log('html---',html)
 
@@ -79,7 +83,7 @@ module.exports.postBook = async function (req, res) {
             hrefArr.push(bonusSpan.innerText);
             let linkParentOfItem = bonusSpan.closest('a');
             if (linkParentOfItem) {
-
+              //here we have to fix the problem of not same paths to elements, paths can be others depending on page we visit
               let productTitle = linkParentOfItem.nextElementSibling.children[2].firstChild.firstChild.innerText;
               let productPrice = linkParentOfItem.nextElementSibling.firstChild.firstChild.firstChild.innerText;
               let bonusValue = bonusSpan.innerText;
@@ -118,10 +122,10 @@ module.exports.postBook = async function (req, res) {
       const pageNavBtns = await page.$$('a.a2427-a4');
       if (pageNavBtns.length === 2 || pageNavBtns.length === 1) {
         await pageNavBtns[0].click();
-        await doInfiniteScroll(page);
+        //await doInfiniteScroll(page);
       } else {
         await pageNavBtns[1].click();
-        await doInfiniteScroll(page);
+        //await doInfiniteScroll(page);
       }
 
       console.log(dataFromAllPages);
