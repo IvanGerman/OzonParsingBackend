@@ -43,27 +43,82 @@ module.exports.postBook = async function (req, res) {
     console.log('Running tests..');
     const page = await browser.newPage();
 
-    
-    await page.goto('https://www.ozon.ru/category/muzhskaya-odezhda-7542/?opened=setapparel&setapparel=175528%2C175542', {
-      waitUntil: 'load'
-    });
-    // await page.goto('https://www.ozon.ru/highlight/tovary-kampanii-rasprodazha-stoka-auto-1024701/', {
+
+    // await page.goto('https://www.ozon.ru/category/muzhskaya-odezhda-7542/?opened=setapparel&setapparel=175528%2C175542', {
     //   waitUntil: 'load'
     // });
+    await page.goto('https://www.ozon.ru/highlight/tovary-kampanii-rasprodazha-stoka-auto-1024701/', {
+      waitUntil: 'load'
+    });
     // await page.goto('https://www.ozon.ru/brand/soul-way-100258413/', {
     //   waitUntil: 'load'
     // });
 
     const doInfiniteScroll = async (page) => {
-      for (let i = 0; i < 5; i += 1) {
-        let previousHeight = await page.evaluate('document.body.scrollHeight');
-        await page.evaluate('window.scrollTo(0, document.body.scrollHeight)');
-        await page.evaluate('alert(document.body.scrollHeight)');
-        await page.waitForFunction(`document.body.scrollHeight > ${previousHeight}`);
-        await new Promise((resolve) => { setTimeout(resolve, 1000) });
-      };
+
+      // Declare some constants
+      const MAXIMUM_NUMBER_OF_TRIALS = 5;
+      const MINIMUM_SLEEPING_TIME_IN_MS = 500;
+      const MAXIMUM_SLEEPING_TIME_IN_MS = 2000;
+
+      // Utility functions
+      const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
+      const randomNumber = (minimum, maximum) => Math.floor(Math.random() * maximum) + minimum;
+      const randomSleep = () => sleep(randomNumber(MINIMUM_SLEEPING_TIME_IN_MS, MAXIMUM_SLEEPING_TIME_IN_MS));
+
+      // How to get at the bottom of an infinity scroll
+      var currentScrollHeight = 0;
+      let manualStop = false;
+      let numberOfScrolls = 0;
+      let numberOfTrials = 0;
+
+      while (numberOfTrials < MAXIMUM_NUMBER_OF_TRIALS && !manualStop) {
+        // Keep the current scroll height
+        currentScrollHeight = await page.evaluate('document.body.scrollHeight');//document.body.scrollHeight;
+
+        // Scroll at the bottom of the page
+        await page.evaluate('window.scrollTo(0, currentScrollHeight)');
+        //window.scrollTo(0, currentScrollHeight);
+
+        // Wait some seconds to load more results
+        await randomSleep();
+
+        // If the height hasn't changed, there may be no more results to load
+        let documentBodyScrollHeight = await page.evaluate('document.body.scrollHeight');
+        if (currentScrollHeight === documentBodyScrollHeight) {
+          // Try another time
+          numberOfTrials++;
+
+          console.log(
+            `Is it already the end of the infinite scroll? ${MAXIMUM_NUMBER_OF_TRIALS - numberOfTrials} trials left.`,
+          );
+        } else {
+          // Restart the number of consecutive trials
+          numberOfTrials = 0;
+
+          // Increment the number of successful scroll
+          numberOfScrolls++;
+
+          console.log(`The scroll #${numberOfScrolls} was successful!`);
+        }
+      }
+
+      console.log('We should be at the bottom of the infinity scroll! Congratulation!');
+      console.log(`${numberOfScrolls} scrolls were needed to load all results!`);
+
+
+
+
+
+      // for (let i = 0; i < 5; i += 1) {
+      //   let previousHeight = await page.evaluate('document.body.scrollHeight');
+      //   await page.evaluate('window.scrollTo(0, document.body.scrollHeight)');
+      //   await page.evaluate('alert(document.body.scrollHeight)');
+      //   await page.waitForFunction(`document.body.scrollHeight > ${previousHeight}`);
+      //   await new Promise((resolve) => { setTimeout(resolve, 1000) });
+      // };
     };
-    //await doInfiniteScroll(page);
+    await doInfiniteScroll(page);
     // const html = await page.content()
     // console.log('html---',html)
 
@@ -122,10 +177,10 @@ module.exports.postBook = async function (req, res) {
       const pageNavBtns = await page.$$('a.a2427-a4');
       if (pageNavBtns.length === 2 || pageNavBtns.length === 1) {
         await pageNavBtns[0].click();
-        //await doInfiniteScroll(page);
+        await doInfiniteScroll(page);
       } else {
         await pageNavBtns[1].click();
-        //await doInfiniteScroll(page);
+        await doInfiniteScroll(page);
       }
 
       console.log(dataFromAllPages);
