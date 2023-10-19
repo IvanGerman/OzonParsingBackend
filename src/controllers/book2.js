@@ -68,6 +68,53 @@ module.exports.postBook = async function (req, res) {
       let numberOfTrials = 0;
 
       while (numberOfTrials < MAXIMUM_NUMBER_OF_TRIALS && !manualStop) {
+        let aaa = await page.evaluate(() => {
+          const itemsss = document.querySelectorAll('a.a2429-a4');
+          return itemsss
+        });  console.log('aaa----', Boolean(aaa[0]));
+        if (aaa[0]) {
+          const allBonusSpans = await page.evaluate(() => {
+            const items = document.querySelectorAll('#paginatorContent .b410-b0');
+            return items
+          })
+          console.log('allBonusSpans---',allBonusSpans);
+          console.log(Object.getOwnPropertyNames(allBonusSpans[0]) );
+          // Array.from(allBonusSpans).forEach((bonusSpan) => {
+          // alert(bonusSpan.innerText);
+          // })
+          let hrefArr = [];
+        let linksArr = [];
+        let singleProductData = {};
+        // Array.from(allBonusSpans).forEach(bonusSpan => {
+        //   if (bonusSpan.innerText.includes('за отзыв')) {
+        //     hrefArr.push(bonusSpan.innerText);
+        //     let linkParentOfItem = bonusSpan.closest('a');
+        //     if (linkParentOfItem) {
+        //       //here we have to fix the problem of not same paths to elements, paths can be others depending on page we visit
+        //       let productTitle = linkParentOfItem.nextElementSibling.children[2].firstChild.firstChild.innerText;
+        //       let productPrice = linkParentOfItem.nextElementSibling.firstChild.firstChild.firstChild.innerText;
+        //       let bonusValue = bonusSpan.innerText;
+        //       let linkToProduct = `ozon.ru${linkParentOfItem.getAttribute("href")}`;
+
+        //       singleProductData.productTitle = productTitle;
+        //       singleProductData.linkToProduct = linkToProduct;
+
+        //       productPrice = productPrice.replace(/\s+/g, '');
+        //       let numberedProductPrice = productPrice.substring(0, productPrice.length - 1);
+        //       singleProductData.productPrice = Number(numberedProductPrice);
+
+        //       singleProductData.bonusValue = Number(bonusValue.substring(0, bonusValue.indexOf(' ')));
+
+        //       linksArr.push({ ...singleProductData });
+        //     }
+        //   }
+        // });
+        console.log('linksArr---',linksArr);
+        return linksArr;
+
+        }
+
+        
         // Keep the current scroll height
         currentScrollHeight = await page.evaluate('document.body.scrollHeight');//document.body.scrollHeight;
 
@@ -87,6 +134,7 @@ module.exports.postBook = async function (req, res) {
           console.log(
             `Is it already the end of the infinite scroll? ${MAXIMUM_NUMBER_OF_TRIALS - numberOfTrials} trials left.`,
           );
+
         } else {
           // Restart the number of consecutive trials
           numberOfTrials = 0;
@@ -101,32 +149,17 @@ module.exports.postBook = async function (req, res) {
       console.log('We should be at the bottom of the infinity scroll! Congratulation!');
       console.log(`${numberOfScrolls} scrolls were needed to load all results!`);
 
-
-
-
-
-      // for (let i = 0; i < 5; i += 1) {
-      //   let previousHeight = await page.evaluate('document.body.scrollHeight');
-      //   await page.evaluate('window.scrollTo(0, document.body.scrollHeight)');
-      //   await page.evaluate('alert(document.body.scrollHeight)');
-      //   await page.waitForFunction(`document.body.scrollHeight > ${previousHeight}`);
-      //   await new Promise((resolve) => { setTimeout(resolve, 1000) });
-      // };
     };
     await doInfiniteScroll(page);
-    // const html = await page.content()
-    // console.log('html---',html)
 
 
     var i = 0;
 
-    const page2 = await browser.newPage();
-
     const getDataMain = async () => {
 
-      const getDataFromPage = await page2.evaluate(() => {
+      const getDataFromPage = await page.evaluate(() => {
 
-        const allBonusSpans = document.querySelectorAll('.i3w .b49-b0');
+        const allBonusSpans = document.querySelectorAll('.wi4 .b410-b0');
 
         let hrefArr = [];
         let linksArr = [];
@@ -169,10 +202,11 @@ module.exports.postBook = async function (req, res) {
       i += 1;
       if (i === 20) { break }
 
-      await page2.waitForTimeout(5000);
+      await page.waitForTimeout(5000);
       getDataMain();
 
-      const pageNavBtns = await page2.$$('a.a2428-a4');
+      const pageNavBtns = await page.$$('a.a2429-a4');
+      console.log('pageNavBtns.length---', pageNavBtns.length);
       if (pageNavBtns.length === 2 || pageNavBtns.length === 1) {
         await pageNavBtns[0].click();
         await doInfiniteScroll(page);
@@ -184,7 +218,7 @@ module.exports.postBook = async function (req, res) {
       console.log(dataFromAllPages);
 
       try {
-        await page2.waitForSelector('a.a2428-a4');
+        await page.waitForSelector('a.a2429-a4');
       } catch (error) {
         console.log('errorhandling111');
         await getDataMain();
