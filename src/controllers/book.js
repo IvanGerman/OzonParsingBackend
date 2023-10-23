@@ -61,13 +61,13 @@ module.exports.postBook = async function (req, res) {
 
       const getDataFromPage = await page.evaluate(() => {
 
-        const allBonusSpans = document.querySelectorAll('.i3w .b49-b0');
-
+        const allBonusSpans = document.querySelectorAll('.iw5 .b410-b0');
+        
         let hrefArr = [];
         let linksArr = [];
         let singleProductData = {};
         Array.from(allBonusSpans).forEach(bonusSpan => {
-          if (bonusSpan.innerText.includes('за отзыв')) {
+          if (bonusSpan.innerText.includes('бонуса')) {
             hrefArr.push(bonusSpan.innerText);
             let linkParentOfItem = bonusSpan.closest('a');
             if (linkParentOfItem) {
@@ -107,7 +107,7 @@ module.exports.postBook = async function (req, res) {
       await page.waitForTimeout(5000);
       getDataMain();
 
-      const pageNavBtns = await page.$$('a.a2428-a4');
+      const pageNavBtns = await page.$$('a.a2429-a4');
       if (pageNavBtns.length === 2 || pageNavBtns.length === 1) {
         await pageNavBtns[0].click();
       } else {
@@ -117,7 +117,7 @@ module.exports.postBook = async function (req, res) {
       console.log(dataFromAllPages);
 
       try {
-        await page.waitForSelector('a.a2428-a4');
+        await page.waitForSelector('a.a2429-a4');
       } catch (error) {
         console.log('errorhandling111');
         await getDataMain();

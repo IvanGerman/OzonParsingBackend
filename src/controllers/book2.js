@@ -74,11 +74,17 @@ module.exports.postBook = async function (req, res) {
         });  console.log('aaa----', Boolean(aaa[0]));
         if (aaa[0]) {
           const allBonusSpans = await page.evaluate(() => {
-            const items = document.querySelectorAll('#paginatorContent .b410-b0');
+            const items = document.querySelectorAll('#paginatorContent .b410-b0.tsBodyControl400Small');
+            alert(items[4].innerText);
+            Array.from(items).forEach(bonusSpan => {
+              if (bonusSpan.innerText.includes('за отзыв')) {
+                alert(bonusSpan.innerText)
+              }
+            })
             return items
           })
-          console.log('allBonusSpans---',allBonusSpans);
-          console.log(Object.getOwnPropertyNames(allBonusSpans[0]) );
+          // console.log('allBonusSpans---',allBonusSpans);
+          // console.log(allBonusSpans[0].title );
           // Array.from(allBonusSpans).forEach((bonusSpan) => {
           // alert(bonusSpan.innerText);
           // })
@@ -159,7 +165,7 @@ module.exports.postBook = async function (req, res) {
 
       const getDataFromPage = await page.evaluate(() => {
 
-        const allBonusSpans = document.querySelectorAll('.wi4 .b410-b0');
+        const allBonusSpans = document.querySelectorAll('.iw5 .b410-b0');
 
         let hrefArr = [];
         let linksArr = [];
@@ -197,35 +203,35 @@ module.exports.postBook = async function (req, res) {
     }
 
   console.log('163--------------------');
-    while (true) {
+    // while (true) {
 
-      i += 1;
-      if (i === 20) { break }
+    //   i += 1;
+    //   if (i === 20) { break }
 
-      await page.waitForTimeout(5000);
-      getDataMain();
+    //   await page.waitForTimeout(5000);
+    //   getDataMain();
 
-      const pageNavBtns = await page.$$('a.a2429-a4');
-      console.log('pageNavBtns.length---', pageNavBtns.length);
-      if (pageNavBtns.length === 2 || pageNavBtns.length === 1) {
-        await pageNavBtns[0].click();
-        await doInfiniteScroll(page);
-      } else {
-        await pageNavBtns[1].click();
-        await doInfiniteScroll(page);
-      }
+    //   const pageNavBtns = await page.$$('a.a2429-a4');
+    //   console.log('pageNavBtns.length---', pageNavBtns.length);
+    //   if (pageNavBtns.length === 2 || pageNavBtns.length === 1) {
+    //     await pageNavBtns[0].click();
+    //     await doInfiniteScroll(page);
+    //   } else {
+    //     await pageNavBtns[1].click();
+    //     await doInfiniteScroll(page);
+    //   }
 
-      console.log(dataFromAllPages);
+    //   console.log(dataFromAllPages);
 
-      try {
-        await page.waitForSelector('a.a2429-a4');
-      } catch (error) {
-        console.log('errorhandling111');
-        await getDataMain();
-        console.log('errorhandling222');
-        break;
-      }
-    }
+    //   try {
+    //     await page.waitForSelector('a.a2429-a4');
+    //   } catch (error) {
+    //     console.log('errorhandling111');
+    //     await getDataMain();
+    //     console.log('errorhandling222');
+    //     break;
+    //   }
+    // }
 
     //sorting dataFromAllPages in order of items with biggest positive difference between bonusValue and price at start (descending order)
     //const points = [40, 100, 1, 5, 25, 10];
@@ -233,37 +239,37 @@ module.exports.postBook = async function (req, res) {
 
 
     //here we take items which bonusValue is bigger than the price of the item
-    const goldenItems = [];
-    dataFromAllPages.forEach((item) => {
-      if (item.bonusValue > item.productPrice) {
-        goldenItems.push(item);
-      };
-    });
-    fs.writeFile('goldenItemsResult.json', JSON.stringify(goldenItems, null, 2), (err) => {
-      if (err) { throw err };
-      console.log('goldenItemsResult.json saved');
-    })
+    // const goldenItems = [];
+    // dataFromAllPages.forEach((item) => {
+    //   if (item.bonusValue > item.productPrice) {
+    //     goldenItems.push(item);
+    //   };
+    // });
+    // fs.writeFile('goldenItemsResult.json', JSON.stringify(goldenItems, null, 2), (err) => {
+    //   if (err) { throw err };
+    //   console.log('goldenItemsResult.json saved');
+    // })
 
 
-    fs.writeFile('obtainDataResult.json', JSON.stringify(dataFromAllPages, null, 2), (err) => {
-      if (err) { throw err };
-      console.log('obtainDataResult.json saved');
-    })
+    // fs.writeFile('obtainDataResult.json', JSON.stringify(dataFromAllPages, null, 2), (err) => {
+    //   if (err) { throw err };
+    //   console.log('obtainDataResult.json saved');
+    // })
     //await browser.close()
     console.log(`All done`)
 
-    try {
-      console.log('sending response------')
+    // try {
+    //   console.log('sending response------')
 
-      res.status(201).json({
-        result: dataFromAllPages
-      });
+    //   res.status(201).json({
+    //     result: dataFromAllPages
+    //   });
 
-    } catch (err) {
-      res.status(400).json({
-        message: 'error occured'
-      })
-    }
+    // } catch (err) {
+    //   res.status(400).json({
+    //     message: 'error occured'
+    //   })
+    // }
   })
 
 
