@@ -51,6 +51,7 @@ module.exports.postBook = async function (req, res) {
 
     const doInfiniteScroll = async (page) => {
 
+      let singlePageData;
       // Declare some constants
       const MAXIMUM_NUMBER_OF_TRIALS = 5;
       const MINIMUM_SLEEPING_TIME_IN_MS = 500;
@@ -75,63 +76,25 @@ module.exports.postBook = async function (req, res) {
         if (aaa[0]) {
           const allBonusSpans = await page.evaluate(() => {
             const items = document.querySelectorAll('#paginatorContent .b410-b0.tsBodyControl400Small');
-            alert(items[4].innerText);
+            singlePageData222 = Array.from(items);
+            alert(singlePageData222)
+            alert(items[4].innerText); //have to take all attribute data from html elements bevor converting through Array.from
             Array.from(items).forEach(bonusSpan => {
               if (bonusSpan.innerText.includes('за отзыв')) {
                 alert(bonusSpan.innerText)
               }
             })
-            return items
+            return singlePageData222;
           })
-          // console.log('allBonusSpans---',allBonusSpans);
-          // console.log(allBonusSpans[0].title );
-          // Array.from(allBonusSpans).forEach((bonusSpan) => {
-          // alert(bonusSpan.innerText);
-          // })
-          let hrefArr = [];
-        let linksArr = [];
-        let singleProductData = {};
-        // Array.from(allBonusSpans).forEach(bonusSpan => {
-        //   if (bonusSpan.innerText.includes('за отзыв')) {
-        //     hrefArr.push(bonusSpan.innerText);
-        //     let linkParentOfItem = bonusSpan.closest('a');
-        //     if (linkParentOfItem) {
-        //       //here we have to fix the problem of not same paths to elements, paths can be others depending on page we visit
-        //       let productTitle = linkParentOfItem.nextElementSibling.children[2].firstChild.firstChild.innerText;
-        //       let productPrice = linkParentOfItem.nextElementSibling.firstChild.firstChild.firstChild.innerText;
-        //       let bonusValue = bonusSpan.innerText;
-        //       let linkToProduct = `ozon.ru${linkParentOfItem.getAttribute("href")}`;
-
-        //       singleProductData.productTitle = productTitle;
-        //       singleProductData.linkToProduct = linkToProduct;
-
-        //       productPrice = productPrice.replace(/\s+/g, '');
-        //       let numberedProductPrice = productPrice.substring(0, productPrice.length - 1);
-        //       singleProductData.productPrice = Number(numberedProductPrice);
-
-        //       singleProductData.bonusValue = Number(bonusValue.substring(0, bonusValue.indexOf(' ')));
-
-        //       linksArr.push({ ...singleProductData });
-        //     }
-        //   }
-        // });
-        console.log('linksArr---',linksArr);
-        return linksArr;
-
+          singlePageData = allBonusSpans;
+          console.log('singlePageData777777777-',singlePageData);
         }
 
         
-        // Keep the current scroll height
-        currentScrollHeight = await page.evaluate('document.body.scrollHeight');//document.body.scrollHeight;
-
-        // Scroll at the bottom of the page
+        
+        currentScrollHeight = await page.evaluate('document.body.scrollHeight');
         await page.evaluate('window.scrollTo(0, document.body.scrollHeight)');
-        //window.scrollTo(0, currentScrollHeight);
-
-        // Wait some seconds to load more results
         await randomSleep();
-
-        // If the height hasn't changed, there may be no more results to load
         let documentBodyScrollHeight = await page.evaluate('document.body.scrollHeight');
         if (currentScrollHeight === documentBodyScrollHeight) {
           // Try another time
@@ -154,132 +117,28 @@ module.exports.postBook = async function (req, res) {
 
       console.log('We should be at the bottom of the infinity scroll! Congratulation!');
       console.log(`${numberOfScrolls} scrolls were needed to load all results!`);
-
+      console.log('singlePageData222222-',singlePageData)
+      return singlePageData
     };
-    await doInfiniteScroll(page);
 
+    let singlePageData2 = await doInfiniteScroll(page);
+    console.log('singlePageData2---',singlePageData2);
+    dataFromAllPages.push(singlePageData2);
+    console.log('dataFromAllPages', dataFromAllPages[0]);
 
-    var i = 0;
-
-    const getDataMain = async () => {
-
-      const getDataFromPage = await page.evaluate(() => {
-
-        const allBonusSpans = document.querySelectorAll('.iw5 .b410-b0');
-
-        let hrefArr = [];
-        let linksArr = [];
-        let singleProductData = {};
-        Array.from(allBonusSpans).forEach(bonusSpan => {
-          if (bonusSpan.innerText.includes('за отзыв')) {
-            hrefArr.push(bonusSpan.innerText);
-            let linkParentOfItem = bonusSpan.closest('a');
-            if (linkParentOfItem) {
-              //here we have to fix the problem of not same paths to elements, paths can be others depending on page we visit
-              let productTitle = linkParentOfItem.nextElementSibling.children[2].firstChild.firstChild.innerText;
-              let productPrice = linkParentOfItem.nextElementSibling.firstChild.firstChild.firstChild.innerText;
-              let bonusValue = bonusSpan.innerText;
-              let linkToProduct = `ozon.ru${linkParentOfItem.getAttribute("href")}`;
-
-              singleProductData.productTitle = productTitle;
-              singleProductData.linkToProduct = linkToProduct;
-
-              productPrice = productPrice.replace(/\s+/g, '');
-              let numberedProductPrice = productPrice.substring(0, productPrice.length - 1);
-              singleProductData.productPrice = Number(numberedProductPrice);
-
-              singleProductData.bonusValue = Number(bonusValue.substring(0, bonusValue.indexOf(' ')));
-
-              linksArr.push({ ...singleProductData });
-            }
-          }
-        });
-        return linksArr;
-      });
-
-      getDataFromPage.forEach((singleProduct) => {
-        dataFromAllPages.push(singleProduct);
-      });
-    }
 
   console.log('163--------------------');
-    // while (true) {
+  console.log(`All done`)
 
-    //   i += 1;
-    //   if (i === 20) { break }
-
-    //   await page.waitForTimeout(5000);
-    //   getDataMain();
-
-    //   const pageNavBtns = await page.$$('a.a2429-a4');
-    //   console.log('pageNavBtns.length---', pageNavBtns.length);
-    //   if (pageNavBtns.length === 2 || pageNavBtns.length === 1) {
-    //     await pageNavBtns[0].click();
-    //     await doInfiniteScroll(page);
-    //   } else {
-    //     await pageNavBtns[1].click();
-    //     await doInfiniteScroll(page);
-    //   }
-
-    //   console.log(dataFromAllPages);
-
-    //   try {
-    //     await page.waitForSelector('a.a2429-a4');
-    //   } catch (error) {
-    //     console.log('errorhandling111');
-    //     await getDataMain();
-    //     console.log('errorhandling222');
-    //     break;
-    //   }
-    // }
-
-    //sorting dataFromAllPages in order of items with biggest positive difference between bonusValue and price at start (descending order)
-    //const points = [40, 100, 1, 5, 25, 10];
-    //points.sort(function(a, b){return b-a});
-
-
-    //here we take items which bonusValue is bigger than the price of the item
-    // const goldenItems = [];
-    // dataFromAllPages.forEach((item) => {
-    //   if (item.bonusValue > item.productPrice) {
-    //     goldenItems.push(item);
-    //   };
-    // });
-    // fs.writeFile('goldenItemsResult.json', JSON.stringify(goldenItems, null, 2), (err) => {
-    //   if (err) { throw err };
-    //   console.log('goldenItemsResult.json saved');
-    // })
-
-
-    // fs.writeFile('obtainDataResult.json', JSON.stringify(dataFromAllPages, null, 2), (err) => {
-    //   if (err) { throw err };
-    //   console.log('obtainDataResult.json saved');
-    // })
-    //await browser.close()
-    console.log(`All done`)
-
-    // try {
-    //   console.log('sending response------')
-
-    //   res.status(201).json({
-    //     result: dataFromAllPages
-    //   });
-
-    // } catch (err) {
-    //   res.status(400).json({
-    //     message: 'error occured'
-    //   })
-    // }
   })
-
-
-
-  //---------------------------------------------------------------------------------------
-
-
-
-
 };
+
+
+
+
+
+
+
 
 module.exports.deleteBook = async function (req, res) {
   console.log('deleteBook------');
