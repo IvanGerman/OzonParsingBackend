@@ -53,7 +53,7 @@ module.exports.postBook = async function (req, res) {
 
       let singlePageData;
       // Declare some constants
-      const MAXIMUM_NUMBER_OF_TRIALS = 5;
+      const MAXIMUM_NUMBER_OF_TRIALS = 2;
       const MINIMUM_SLEEPING_TIME_IN_MS = 500;
       const MAXIMUM_SLEEPING_TIME_IN_MS = 2000;
 
@@ -75,19 +75,26 @@ module.exports.postBook = async function (req, res) {
         });  console.log('aaa----', Boolean(aaa[0]));
         if (aaa[0]) {
           const allBonusSpans = await page.evaluate(() => {
+
+            const singlePageBonusDivsData = [];
+            let singleProductData = {};
+
             const items = document.querySelectorAll('#paginatorContent .b410-b0.tsBodyControl400Small');
             singlePageData222 = Array.from(items);
-            alert(singlePageData222)
-            alert(items[4].innerText); //have to take all attribute data from html elements bevor converting through Array.from
+            //alert(singlePageData222)
+            //alert(items[4].innerText); //have to take all attribute data from html elements bevor converting through Array.from
             Array.from(items).forEach(bonusSpan => {
               if (bonusSpan.innerText.includes('за отзыв')) {
                 alert(bonusSpan.innerText)
+                let linkToProduct = bonusSpan.closest('a');
+                singleProductData.linkToProduct = `ozon.ru${linkToProduct.getAttribute("href")}`;
+                singlePageBonusDivsData.push({ ...singleProductData });
               }
             })
-            return singlePageData222;
+            return singlePageBonusDivsData;
           })
           singlePageData = allBonusSpans;
-          console.log('singlePageData777777777-',singlePageData);
+          //console.log('singlePageData777777777-',singlePageData);
         }
 
         
@@ -117,7 +124,7 @@ module.exports.postBook = async function (req, res) {
 
       console.log('We should be at the bottom of the infinity scroll! Congratulation!');
       console.log(`${numberOfScrolls} scrolls were needed to load all results!`);
-      console.log('singlePageData222222-',singlePageData)
+      //console.log('singlePageData222222-',singlePageData)
       return singlePageData
     };
 
