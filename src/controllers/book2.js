@@ -86,8 +86,18 @@ module.exports.postBook = async function (req, res) {
             Array.from(items).forEach(bonusSpan => {
               if (bonusSpan.innerText.includes('за отзыв')) {
                 alert(bonusSpan.innerText)
+
                 let linkToProduct = bonusSpan.closest('a');
                 singleProductData.linkToProduct = `ozon.ru${linkToProduct.getAttribute("href")}`;
+                let productTitle = linkToProduct.nextElementSibling.children[2].firstChild.firstChild.innerText;
+                singleProductData.productTitle = productTitle;
+                let productPrice = linkToProduct.nextElementSibling.firstChild.firstChild.firstChild.innerText;
+                productPrice = productPrice.replace(/\s+/g, '');
+                productPrice = productPrice.slice(0, -1);
+                singleProductData.productPrice = Number(productPrice);
+                let bonusValue = bonusSpan.innerText;
+                singleProductData.bonusValue = Number(bonusValue.substring(0, bonusValue.indexOf(' ')));
+
                 singlePageBonusDivsData.push({ ...singleProductData });
               }
             })
@@ -137,6 +147,8 @@ module.exports.postBook = async function (req, res) {
   console.log('163--------------------');
   console.log(`All done`)
 
+  const pageNavBtns = await page.$$('a.a2429-a4');
+  await pageNavBtns[0].click();//from here on to repeat scrolling/getting data/click next page
   })
 };
 
