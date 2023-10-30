@@ -43,11 +43,11 @@ module.exports.postBook = async function (req, res) {
     console.log('Running tests..');
     const page = await browser.newPage();
 
-    
+
     await page.goto('https://www.ozon.ru/highlight/tovary-kampanii-rasprodazha-stoka-auto-1024701/?currency_price=14.000%3B400.000', {
       waitUntil: 'load'
     });
-    
+
 
     const doInfiniteScroll = async (page) => {
 
@@ -72,7 +72,7 @@ module.exports.postBook = async function (req, res) {
         let aaa = await page.evaluate(() => {
           const itemsss = document.querySelectorAll('a.a2429-a4');
           return itemsss
-        });  console.log('aaa----', Boolean(aaa[0]));
+        }); console.log('aaa----', Boolean(aaa[0]));
         if (aaa[0]) {
           const allBonusSpans = await page.evaluate(() => {
 
@@ -107,8 +107,8 @@ module.exports.postBook = async function (req, res) {
           //console.log('singlePageData777777777-',singlePageData);
         }
 
-        
-        
+
+
         currentScrollHeight = await page.evaluate('document.body.scrollHeight');
         await page.evaluate('window.scrollTo(0, document.body.scrollHeight)');
         await randomSleep();
@@ -138,17 +138,27 @@ module.exports.postBook = async function (req, res) {
       return singlePageData
     };
 
-    let singlePageData2 = await doInfiniteScroll(page);
-    console.log('singlePageData2---',singlePageData2);
-    dataFromAllPages.push(singlePageData2);
-    console.log('dataFromAllPages', dataFromAllPages[0]);
+    let i = 0;
+    while (true) {
+
+      await page.waitForTimeout(5000);
+      i += 1; console.log('i-------', i);
+      if (i === 4) { break };
+
+      let singlePageData2 = await doInfiniteScroll(page);
+      console.log('singlePageData2---', singlePageData2);
+      dataFromAllPages.push(singlePageData2);
+      console.log('dataFromAllPages', dataFromAllPages[0]);
 
 
-  console.log('163--------------------');
-  console.log(`All done`)
+      console.log('163--------------------');
+      console.log(`All done`)
 
-  const pageNavBtns = await page.$$('a.a2429-a4');
-  await pageNavBtns[0].click();//from here on to repeat scrolling/getting data/click next page
+      const pageNavBtns = await page.$$('a.a2429-a4');
+      await pageNavBtns[0].click();//from here on to repeat scrolling/getting data/click next page
+    }
+
+
   })
 };
 
