@@ -147,7 +147,8 @@ module.exports.postBook = async function (req, res) {
 
       let singlePageData2 = await doInfiniteScroll(page);
       console.log('singlePageData2---', singlePageData2);
-      dataFromAllPages.push(singlePageData2);
+      //to fix- push does not work
+      dataFromAllPages.push(...singlePageData2);
       console.log('dataFromAllPages', dataFromAllPages[0]);
 
 
