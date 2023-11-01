@@ -44,7 +44,11 @@ module.exports.postBook = async function (req, res) {
     const page = await browser.newPage();
 
 
-    await page.goto('https://www.ozon.ru/highlight/tovary-kampanii-rasprodazha-stoka-auto-1024701/?currency_price=14.000%3B400.000', {
+    // await page.goto('https://www.ozon.ru/highlight/tovary-kampanii-rasprodazha-stoka-auto-1024701/?currency_price=14.000%3B400.000', {
+    //   waitUntil: 'load'
+    // });
+
+    await page.goto('https://www.ozon.ru/highlight/bally-za-otzyv-1171518/', {
       waitUntil: 'load'
     });
 
@@ -85,7 +89,7 @@ module.exports.postBook = async function (req, res) {
             //alert(items[4].innerText); //have to take all attribute data from html elements bevor converting through Array.from
             Array.from(items).forEach(bonusSpan => {
               if (bonusSpan.innerText.includes('за отзыв')) {
-                alert(bonusSpan.innerText)
+                //alert(bonusSpan.innerText)
 
                 let linkToProduct = bonusSpan.closest('a');
                 singleProductData.linkToProduct = `ozon.ru${linkToProduct.getAttribute("href")}`;
@@ -143,19 +147,32 @@ module.exports.postBook = async function (req, res) {
 
       await page.waitForTimeout(5000);
       i += 1; console.log('i-------', i);
-      if (i === 4) { break };
+      if (i === 36) {
+        //here we take items which bonusValue is bigger than the price of the item
+        const goldenItems = [];
+        dataFromAllPages.forEach((item) => {
+          if (item.bonusValue +50 > item.productPrice) {
+            goldenItems.push(item);
+          };
+        });
+        fs.writeFileSync('LikvidationGoldenItemsResult.json', JSON.stringify(goldenItems, null, 2), (err) => {
+          if (err) { throw err };
+          console.log('LikvidationGoldenItemsResult.json saved');
+        })
+        break
+      };
 
       let singlePageData2 = await doInfiniteScroll(page);
       console.log('singlePageData2---', singlePageData2);
-      //to fix- push does not work
-      dataFromAllPages.push(...singlePageData2);
-      console.log('dataFromAllPages', dataFromAllPages[0]);
 
+      dataFromAllPages.push(...singlePageData2);
+      console.log('dataFromAllPages', dataFromAllPages);
 
       console.log('163--------------------');
       console.log(`All done`)
 
       const pageNavBtns = await page.$$('a.a2429-a4');
+      //here to handle the case when there are 2 buttons with hthe same classname
       await pageNavBtns[0].click();//from here on to repeat scrolling/getting data/click next page
     }
 
