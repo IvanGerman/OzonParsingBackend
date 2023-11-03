@@ -48,7 +48,7 @@ module.exports.postBook = async function (req, res) {
     //   waitUntil: 'load'
     // });
 
-    await page.goto('https://www.ozon.ru/highlight/bally-za-otzyv-1171518/', {
+    await page.goto('https://www.ozon.ru/highlight/bally-za-otzyv-1171518/?currency_price=53.000%3B350.000', {
       waitUntil: 'load'
     });
 
@@ -151,7 +151,7 @@ module.exports.postBook = async function (req, res) {
         //here we take items which bonusValue is bigger than the price of the item
         const goldenItems = [];
         dataFromAllPages.forEach((item) => {
-          if (item.bonusValue +50 > item.productPrice) {
+          if (item.bonusValue > item.productPrice) {
             goldenItems.push(item);
           };
         });
@@ -171,9 +171,14 @@ module.exports.postBook = async function (req, res) {
       console.log('163--------------------');
       console.log(`All done`)
 
+    
       const pageNavBtns = await page.$$('a.a2429-a4');
-      //here to handle the case when there are 2 buttons with hthe same classname
-      await pageNavBtns[0].click();//from here on to repeat scrolling/getting data/click next page
+      console.log('pageNavBtns.length--', pageNavBtns.length);
+      if (pageNavBtns.length === 1) {
+        await pageNavBtns[0].click();
+      } else {
+        await pageNavBtns[1].click();
+      }
     }
 
 
