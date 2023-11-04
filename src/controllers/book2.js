@@ -147,11 +147,11 @@ module.exports.postBook = async function (req, res) {
 
       await page.waitForTimeout(5000);
       i += 1; console.log('i-------', i);
-      if (i === 36) {
+      if (i === 88) {
         //here we take items which bonusValue is bigger than the price of the item
         const goldenItems = [];
         dataFromAllPages.forEach((item) => {
-          if (item.bonusValue > item.productPrice) {
+          if (item.bonusValue - 70 > item.productPrice) {
             goldenItems.push(item);
           };
         });
@@ -162,10 +162,13 @@ module.exports.postBook = async function (req, res) {
         break
       };
 
+      // to fix singlePageData2 is not iterable (cannot read property undefined)
       let singlePageData2 = await doInfiniteScroll(page);
       console.log('singlePageData2---', singlePageData2);
-
-      dataFromAllPages.push(...singlePageData2);
+      if ( singlePageData2 !== undefined ) {
+        dataFromAllPages.push(...singlePageData2);
+      }
+      //dataFromAllPages.push(...singlePageData2);
       console.log('dataFromAllPages', dataFromAllPages);
 
       console.log('163--------------------');
