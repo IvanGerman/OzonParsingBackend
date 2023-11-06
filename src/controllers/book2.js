@@ -4,21 +4,6 @@ const puppeteer = require('puppeteer-extra');
 const { obtainData } = require("../modules/obtainData");
 const { resolve } = require('path');
 
-module.exports.getBooks = async function (req, res) {
-  console.log('getBooks');
-
-  res.status(200).json({
-    message: 'okkk!'
-  })
-  // try {
-  //   const allBooks = await Book.find();
-  //   res.status(200).json(allBooks);
-  // } catch(err) {
-  //   res.status(404).json({
-  //     message: 'an error occured!'
-  //   })
-  // }     
-};
 
 module.exports.postBook = async function (req, res) {
   console.log('postBookkkk------', req.body.link);
@@ -48,7 +33,7 @@ module.exports.postBook = async function (req, res) {
     //   waitUntil: 'load'
     // });
 
-    await page.goto('https://www.ozon.ru/highlight/bally-za-otzyv-1171518/?currency_price=53.000%3B350.000', {
+    await page.goto('https://www.ozon.ru/highlight/bally-za-otzyv-1171518/?currency_price=1.000%3B150.000', {
       waitUntil: 'load'
     });
 
@@ -147,7 +132,7 @@ module.exports.postBook = async function (req, res) {
 
       await page.waitForTimeout(5000);
       i += 1; console.log('i-------', i);
-      if (i === 88) {
+      if (i === 20) {
         //here we take items which bonusValue is bigger than the price of the item
         const goldenItems = [];
         dataFromAllPages.forEach((item) => {
@@ -177,6 +162,7 @@ module.exports.postBook = async function (req, res) {
     
       const pageNavBtns = await page.$$('a.a2429-a4');
       console.log('pageNavBtns.length--', pageNavBtns.length);
+      // have to handle the case when the a-tag changes to a button-tag at the last page
       if (pageNavBtns.length === 1) {
         await pageNavBtns[0].click();
       } else {
@@ -186,47 +172,4 @@ module.exports.postBook = async function (req, res) {
 
 
   })
-};
-
-
-
-
-
-
-
-
-module.exports.deleteBook = async function (req, res) {
-  console.log('deleteBook------');
-
-  // try {
-  //   // check is this book in DB 
-  // const isBookInDB = await Book.findOne({_id: req.params.id});
-  // if (!isBookInDB) {
-  //   res.status(404).json({
-  //     message: 'this book is not in DB!'
-  //   })
-  // } else { //delete book
-  //   await Book.deleteOne({ _id: req.params.id });
-  //   res.status(200).json(`${isBookInDB.name} is deleted`);
-  // }
-  // } catch(err) {
-  //   res.status(404).json({
-  //     message: 'error occured!'
-  //   })
-  // }     
-};
-
-
-module.exports.updateBook = async function (req, res) {
-  console.log('updateBook------');
-
-
-  // try {
-  //    const result = await Book.findOneAndUpdate({ _id: req.params.id }, { name: req.body.name }, { new: true });
-  //    res.status(200).json(`Book has been updated, new book name is: ${result.name} `);
-  // } catch {
-  //     res.status(400).json({
-  //     message: 'error occured'
-  //     })
-  //   }
 };
