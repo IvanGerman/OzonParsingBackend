@@ -33,7 +33,7 @@ module.exports.postBook = async function (req, res) {
     //   waitUntil: 'load'
     // });
 
-    await page.goto('https://www.ozon.ru/highlight/bally-za-otzyv-1171518/?currency_price=1.000%3B150.000', {
+    await page.goto('https://www.ozon.ru/highlight/bally-za-otzyv-1171518/?currency_price=1.000%3B140.000', {
       waitUntil: 'load'
     });
 
@@ -132,7 +132,7 @@ module.exports.postBook = async function (req, res) {
 
       await page.waitForTimeout(5000);
       i += 1; console.log('i-------', i);
-      if (i === 20) {
+      if (i === 33) {
         //here we take items which bonusValue is bigger than the price of the item
         const goldenItems = [];
         dataFromAllPages.forEach((item) => {
@@ -149,17 +149,21 @@ module.exports.postBook = async function (req, res) {
 
       // to fix singlePageData2 is not iterable (cannot read property undefined)
       let singlePageData2 = await doInfiniteScroll(page);
-      console.log('singlePageData2---', singlePageData2);
-      if ( singlePageData2 !== undefined ) {
+      //console.log('singlePageData2---', singlePageData2);
+      if (singlePageData2 !== undefined) {
         dataFromAllPages.push(...singlePageData2);
       }
       //dataFromAllPages.push(...singlePageData2);
-      console.log('dataFromAllPages', dataFromAllPages);
+      //console.log('dataFromAllPages', dataFromAllPages);
 
       console.log('163--------------------');
       console.log(`All done`)
 
-    
+      //let aTagParents = await page.evaluate("document.querySelectorAll('.qe3')");
+      
+      const aTagParents = await page.$$('.qe3 .a2429-a4');
+      console.log('aTagParents--', aTagParents[aTagParents.length - 1])
+      console.log('aTagParents.firstChild--', aTagParents[aTagParents.length - 1].firstChild);
       const pageNavBtns = await page.$$('a.a2429-a4');
       console.log('pageNavBtns.length--', pageNavBtns.length);
       // have to handle the case when the a-tag changes to a button-tag at the last page
