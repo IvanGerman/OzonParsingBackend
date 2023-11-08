@@ -161,9 +161,17 @@ module.exports.postBook = async function (req, res) {
 
       //let aTagParents = await page.evaluate("document.querySelectorAll('.qe3')");
       
-      const aTagParents = await page.$$('.qe3 .a2429-a4');
+      const aTagParents = await page.$$('.qe3 .a2429-a');
       console.log('aTagParents--', aTagParents[aTagParents.length - 1])
-      console.log('aTagParents.firstChild--', aTagParents[aTagParents.length - 1].firstChild);
+      // const t = await (await aTagParents[aTagParents.length - 1].getProperty('firstChild'))
+      // console.log('t-----',t);
+      // console.log('aTagParents.firstChild--', aTagParents[aTagParents.length - 1].firstChild);
+
+      const rrr = await page.evaluate(() => document.querySelectorAll('.qe3'));
+      console.log('Array.from(rrr)--', Array.from(rrr)[0]);
+      Array.from(rrr).forEach((el) => {
+        console.log('el--',el);
+      })
       const pageNavBtns = await page.$$('a.a2429-a4');
       console.log('pageNavBtns.length--', pageNavBtns.length);
       // have to handle the case when the a-tag changes to a button-tag at the last page
