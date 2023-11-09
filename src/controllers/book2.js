@@ -147,7 +147,7 @@ module.exports.postBook = async function (req, res) {
         break
       };
 
-      // to fix singlePageData2 is not iterable (cannot read property undefined)
+      
       let singlePageData2 = await doInfiniteScroll(page);
       //console.log('singlePageData2---', singlePageData2);
       if (singlePageData2 !== undefined) {
@@ -161,20 +161,39 @@ module.exports.postBook = async function (req, res) {
 
       //let aTagParents = await page.evaluate("document.querySelectorAll('.qe3')");
       
-      const aTagParents = await page.$$('.qe3 .a2429-a');
-      console.log('aTagParents--', aTagParents[aTagParents.length - 1])
+      const aTagParent = await page.$$('.qe3');
+      console.log('aTagParent--', aTagParent)
       // const t = await (await aTagParents[aTagParents.length - 1].getProperty('firstChild'))
       // console.log('t-----',t);
       // console.log('aTagParents.firstChild--', aTagParents[aTagParents.length - 1].firstChild);
 
-      const rrr = await page.evaluate(() => document.querySelectorAll('.qe3'));
-      console.log('Array.from(rrr)--', Array.from(rrr)[0]);
-      Array.from(rrr).forEach((el) => {
-        console.log('el--',el);
-      })
+      const aTagParents = await page.evaluate(() => {
+        const ttt =  document.querySelectorAll('.qe3');
+        Array.from(ttt).forEach((el) => {
+        //alert(el.firstChild);
+        })
+        return ttt;
+        }
+      );
+      
+      console.log('aTagParents--', aTagParents);
+      
       const pageNavBtns = await page.$$('a.a2429-a4');
       console.log('pageNavBtns.length--', pageNavBtns.length);
       // have to handle the case when the a-tag changes to a button-tag at the last page
+      let isItLastPage = await page.evaluate(() => {
+        const ttt =  document.querySelectorAll('.qe3');
+        //alert( ttt[ttt.length - 1].firstChild.tagName )
+        if ( ttt[ttt.length - 1].firstChild.tagName === 'BUTTON'  ) {
+          return true
+        }
+        return false;
+        }
+      );
+      if ( isItLastPage === true ) {
+        console.log('last page now');
+      }
+
       if (pageNavBtns.length === 1) {
         await pageNavBtns[0].click();
       } else {
