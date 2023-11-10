@@ -33,7 +33,7 @@ module.exports.postBook = async function (req, res) {
     //   waitUntil: 'load'
     // });
 
-    await page.goto('https://www.ozon.ru/highlight/bally-za-otzyv-1171518/?currency_price=1.000%3B140.000', {
+    await page.goto('https://www.ozon.ru/highlight/bally-za-otzyv-1171518/?currency_price=1.000%3B120.000', {
       waitUntil: 'load'
     });
 
@@ -70,11 +70,9 @@ module.exports.postBook = async function (req, res) {
 
             const items = document.querySelectorAll('#paginatorContent .b410-b0.tsBodyControl400Small');
             singlePageData222 = Array.from(items);
-            //alert(singlePageData222)
-            //alert(items[4].innerText); //have to take all attribute data from html elements bevor converting through Array.from
+            //have to take all attribute data from html elements bevor converting through Array.from
             Array.from(items).forEach(bonusSpan => {
               if (bonusSpan.innerText.includes('за отзыв')) {
-                //alert(bonusSpan.innerText)
 
                 let linkToProduct = bonusSpan.closest('a');
                 singleProductData.linkToProduct = `ozon.ru${linkToProduct.getAttribute("href")}`;
@@ -93,10 +91,7 @@ module.exports.postBook = async function (req, res) {
             return singlePageBonusDivsData;
           })
           singlePageData = allBonusSpans;
-          //console.log('singlePageData777777777-',singlePageData);
         }
-
-
 
         currentScrollHeight = await page.evaluate('document.body.scrollHeight');
         await page.evaluate('window.scrollTo(0, document.body.scrollHeight)');
@@ -123,68 +118,45 @@ module.exports.postBook = async function (req, res) {
 
       console.log('We should be at the bottom of the infinity scroll! Congratulation!');
       console.log(`${numberOfScrolls} scrolls were needed to load all results!`);
-      //console.log('singlePageData222222-',singlePageData)
       return singlePageData
     };
 
     let i = 0;
+
+    const breakInfiniteCycle = () => {
+       //here we take items which bonusValue is bigger than the price of the item
+       const goldenItems = [];
+       dataFromAllPages.forEach((item) => {
+         if (item.bonusValue - 70 > item.productPrice) {
+           goldenItems.push(item);
+         };
+       });
+       fs.writeFileSync('LikvidationGoldenItemsResult.json', JSON.stringify(goldenItems, null, 2), (err) => {
+         if (err) { throw err };
+         console.log('LikvidationGoldenItemsResult.json saved');
+       })
+    }
+
+
     while (true) {
 
       await page.waitForTimeout(5000);
       i += 1; console.log('i-------', i);
+
       if (i === 33) {
-        //here we take items which bonusValue is bigger than the price of the item
-        const goldenItems = [];
-        dataFromAllPages.forEach((item) => {
-          if (item.bonusValue - 70 > item.productPrice) {
-            goldenItems.push(item);
-          };
-        });
-        fs.writeFileSync('LikvidationGoldenItemsResult.json', JSON.stringify(goldenItems, null, 2), (err) => {
-          if (err) { throw err };
-          console.log('LikvidationGoldenItemsResult.json saved');
-        })
+        breakInfiniteCycle();
         break
       };
 
       
       let singlePageData2 = await doInfiniteScroll(page);
-      //console.log('singlePageData2---', singlePageData2);
       if (singlePageData2 !== undefined) {
         dataFromAllPages.push(...singlePageData2);
-      }
-      //dataFromAllPages.push(...singlePageData2);
-      //console.log('dataFromAllPages', dataFromAllPages);
+      };
 
-      console.log('163--------------------');
-      console.log(`All done`)
-
-      //let aTagParents = await page.evaluate("document.querySelectorAll('.qe3')");
-      
-      const aTagParent = await page.$$('.qe3');
-      console.log('aTagParent--', aTagParent)
-      // const t = await (await aTagParents[aTagParents.length - 1].getProperty('firstChild'))
-      // console.log('t-----',t);
-      // console.log('aTagParents.firstChild--', aTagParents[aTagParents.length - 1].firstChild);
-
-      const aTagParents = await page.evaluate(() => {
-        const ttt =  document.querySelectorAll('.qe3');
-        Array.from(ttt).forEach((el) => {
-        //alert(el.firstChild);
-        })
-        return ttt;
-        }
-      );
-      
-      console.log('aTagParents--', aTagParents);
-      
-      const pageNavBtns = await page.$$('a.a2429-a4');
-      console.log('pageNavBtns.length--', pageNavBtns.length);
-      // have to handle the case when the a-tag changes to a button-tag at the last page
       let isItLastPage = await page.evaluate(() => {
-        const ttt =  document.querySelectorAll('.qe3');
-        //alert( ttt[ttt.length - 1].firstChild.tagName )
-        if ( ttt[ttt.length - 1].firstChild.tagName === 'BUTTON'  ) {
+        const aTagParentDiv =  document.querySelectorAll('.qe3');
+        if ( aTagParentDiv[aTagParentDiv.length - 1].firstChild.tagName === 'BUTTON'  ) {
           return true
         }
         return false;
@@ -192,7 +164,12 @@ module.exports.postBook = async function (req, res) {
       );
       if ( isItLastPage === true ) {
         console.log('last page now');
+        breakInfiniteCycle();
+        break
       }
+      console.log(`All done`)     
+      
+      const pageNavBtns = await page.$$('a.a2429-a4');
 
       if (pageNavBtns.length === 1) {
         await pageNavBtns[0].click();
@@ -200,7 +177,5 @@ module.exports.postBook = async function (req, res) {
         await pageNavBtns[1].click();
       }
     }
-
-
   })
 };
