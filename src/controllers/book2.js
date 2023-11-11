@@ -131,6 +131,24 @@ module.exports.postBook = async function (req, res) {
            goldenItems.push(item);
          };
        });
+       //sorting dataFromAllPages in order of items with biggest positive difference between bonusValue and price at start (descending order)
+       goldenItems.forEach((item) => {
+        let difference = item.bonusValue - item.productPrice;
+        item.difference = difference;     
+      });
+      let compare = (a, b) => {
+        if (a.difference < b.difference) {
+            return -1;
+        }
+        if (a.difference > b.difference) {
+            return 1;
+        }
+        return 0;
+      };
+      goldenItems.sort(compare);
+       //const points = [40, 100, 1, 5, 25, 10];
+       //points.sort(function(a, b){return b-a});
+
        fs.writeFileSync('LikvidationGoldenItemsResult.json', JSON.stringify(goldenItems, null, 2), (err) => {
          if (err) { throw err };
          console.log('LikvidationGoldenItemsResult.json saved');
