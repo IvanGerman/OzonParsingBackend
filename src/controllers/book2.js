@@ -131,7 +131,7 @@ module.exports.postBook = async function (req, res) {
            goldenItems.push(item);
          };
        });
-       //sorting dataFromAllPages in order of items with biggest positive difference between bonusValue and price at start (descending order)
+       //sorting goldenItems in order of items with biggest positive difference between bonusValue and price at start (descending order)
        goldenItems.forEach((item) => {
         let difference = item.bonusValue - item.productPrice;
         item.difference = difference;     

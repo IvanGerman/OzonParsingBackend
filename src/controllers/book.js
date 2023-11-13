@@ -4,27 +4,9 @@ const puppeteer = require('puppeteer-extra');
 const { obtainData } = require("../modules/obtainData");
 const { resolve } = require('path');
 
-module.exports.getBooks = async function (req, res) {
-  console.log('getBooks');
-
-  res.status(200).json({
-    message: 'okkk!'
-  })
-  // try {
-  //   const allBooks = await Book.find();
-  //   res.status(200).json(allBooks);
-  // } catch(err) {
-  //   res.status(404).json({
-  //     message: 'an error occured!'
-  //   })
-  // }     
-};
 
 module.exports.postBook = async function (req, res) {
   console.log('postBookkkk------', req.body.link);
-
-
-  //----------------------------------------------------------------------------------------
 
   // add stealth plugin and use defaults (all evasion techniques)
   const StealthPlugin = require('puppeteer-extra-plugin-stealth')
@@ -44,13 +26,13 @@ module.exports.postBook = async function (req, res) {
     const page = await browser.newPage();
 
 
-    // await page.goto('https://www.ozon.ru/category/muzhskaya-odezhda-7542/?opened=setapparel&setapparel=175528%2C175542', {
-    //   waitUntil: 'load'
-    // });
-    
-    await page.goto('https://www.ozon.ru/brand/soul-way-100258413/', {
+    await page.goto('https://www.ozon.ru/seller/agromarket-1222632/products/?currency_price=133.000%3B255.000&miniapp=seller_1222632&sorting=price', {
       waitUntil: 'load'
     });
+    
+    // await page.goto('https://www.ozon.ru/brand/soul-way-100258413/', {
+    //   waitUntil: 'load'
+    // });
 
     // const html = await page.content()
     // console.log('html---',html)
@@ -61,13 +43,13 @@ module.exports.postBook = async function (req, res) {
 
       const getDataFromPage = await page.evaluate(() => {
 
-        const allBonusSpans = document.querySelectorAll('.iw5 .b410-b0');
-        
+        const allBonusSpans = document.querySelectorAll('.b410-b0');
+        alert('allBonusSpans--',allBonusSpans)
         let hrefArr = [];
         let linksArr = [];
         let singleProductData = {};
         Array.from(allBonusSpans).forEach(bonusSpan => {
-          if (bonusSpan.innerText.includes('бонуса')) {
+          if (bonusSpan.innerText.includes('отзыв')) {
             hrefArr.push(bonusSpan.innerText);
             let linkParentOfItem = bonusSpan.closest('a');
             if (linkParentOfItem) {
@@ -164,48 +146,4 @@ module.exports.postBook = async function (req, res) {
       })
     }
   })
-
-
-
-  //---------------------------------------------------------------------------------------
-
-
-
-
-};
-
-module.exports.deleteBook = async function (req, res) {
-  console.log('deleteBook------');
-
-  // try {
-  //   // check is this book in DB 
-  // const isBookInDB = await Book.findOne({_id: req.params.id});
-  // if (!isBookInDB) {
-  //   res.status(404).json({
-  //     message: 'this book is not in DB!'
-  //   })
-  // } else { //delete book
-  //   await Book.deleteOne({ _id: req.params.id });
-  //   res.status(200).json(`${isBookInDB.name} is deleted`);
-  // }
-  // } catch(err) {
-  //   res.status(404).json({
-  //     message: 'error occured!'
-  //   })
-  // }     
-};
-
-
-module.exports.updateBook = async function (req, res) {
-  console.log('updateBook------');
-
-
-  // try {
-  //    const result = await Book.findOneAndUpdate({ _id: req.params.id }, { name: req.body.name }, { new: true });
-  //    res.status(200).json(`Book has been updated, new book name is: ${result.name} `);
-  // } catch {
-  //     res.status(400).json({
-  //     message: 'error occured'
-  //     })
-  //   }
 };
