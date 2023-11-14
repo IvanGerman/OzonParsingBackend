@@ -38,6 +38,7 @@ module.exports.postBook = async function (req, res) {
     });
 
 
+
     const doInfiniteScroll = async (page) => {
 
       let singlePageData;
@@ -68,7 +69,7 @@ module.exports.postBook = async function (req, res) {
             const singlePageBonusDivsData = [];
             let singleProductData = {};
 
-            const items = document.querySelectorAll('#paginatorContent .b410-b0.tsBodyControl400Small');
+            const items = document.querySelectorAll('#paginatorContent .b411-b0.tsBodyControl400Small');
             singlePageData222 = Array.from(items);
             //have to take all attribute data from html elements bevor converting through Array.from
             Array.from(items).forEach(bonusSpan => {
@@ -127,7 +128,7 @@ module.exports.postBook = async function (req, res) {
        //here we take items which bonusValue is bigger than the price of the item
        const goldenItems = [];
        dataFromAllPages.forEach((item) => {
-         if (item.bonusValue - 70 > item.productPrice) {
+         if (item.bonusValue - 10 > item.productPrice) {
            goldenItems.push(item);
          };
        });
@@ -146,8 +147,6 @@ module.exports.postBook = async function (req, res) {
         return 0;
       };
       goldenItems.sort(compare);
-       //const points = [40, 100, 1, 5, 25, 10];
-       //points.sort(function(a, b){return b-a});
 
        fs.writeFileSync('LikvidationGoldenItemsResult.json', JSON.stringify(goldenItems, null, 2), (err) => {
          if (err) { throw err };
@@ -161,7 +160,7 @@ module.exports.postBook = async function (req, res) {
       await page.waitForTimeout(5000);
       i += 1; console.log('i-------', i);
 
-      if (i === 33) {
+      if (i === 8) {
         breakInfiniteCycle();
         break
       };
