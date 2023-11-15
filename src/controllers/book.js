@@ -26,7 +26,7 @@ module.exports.postBook = async function (req, res) {
     const page = await browser.newPage();
 
 
-    await page.goto('https://www.ozon.ru/seller/agromarket-1222632/products/?currency_price=133.000%3B255.000&miniapp=seller_1222632&sorting=price', {
+    await page.goto('https://www.ozon.ru/brand/natura-spa-100790981/', {
       waitUntil: 'load'
     });
     
@@ -39,12 +39,13 @@ module.exports.postBook = async function (req, res) {
 
     var i = 0;
 
-    const getDataMain = async () => {
+    const getDataMain = async () => {  console.log('getDataMain');
 
+      await page.waitForTimeout(2000);
       const getDataFromPage = await page.evaluate(() => {
 
         //const allBonusSpans = document.querySelectorAll('.b410-b0.tsBodyControl400Small');
-        const allBonusSpans = document.querySelectorAll('.iy4 .b410-b div');
+        const allBonusSpans = document.querySelectorAll('.i8z .b411-b div');
         alert(allBonusSpans[0])
         let hrefArr = [];
         let linksArr = [];
@@ -84,25 +85,28 @@ module.exports.postBook = async function (req, res) {
 
     while (true) {
 
-      i += 1;
+      i += 1;   console.log('i----',i);
       if (i === 20) { break }
 
-      await page.waitForTimeout(5000);
+      await page.waitForTimeout(15000);
       getDataMain();
 
       const pageNavBtns = await page.$$('a.a2429-a4');
+      console.log('pageNavBtns length--',pageNavBtns.length);
       if (pageNavBtns.length === 2 || pageNavBtns.length === 1) {
         await pageNavBtns[0].click();
       } else {
         await pageNavBtns[1].click();
       }
 
-      console.log(dataFromAllPages);
+      console.log('dataFromAllPages---',dataFromAllPages);
 
       try {
+        await page.waitForTimeout(2000);
         await page.waitForSelector('a.a2429-a4');
       } catch (error) {
         console.log('errorhandling111');
+
         await getDataMain();
         console.log('errorhandling222');
         break;
