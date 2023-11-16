@@ -45,7 +45,7 @@ module.exports.postBook = async function (req, res) {
       const getDataFromPage = await page.evaluate(() => {
 
         //const allBonusSpans = document.querySelectorAll('.b410-b0.tsBodyControl400Small');
-        const allBonusSpans = document.querySelectorAll('.i8z .b411-b div');
+        const allBonusSpans = document.querySelectorAll('.jj3 .b411-b div');
         alert(allBonusSpans[0])
         let hrefArr = [];
         let linksArr = [];
@@ -88,8 +88,10 @@ module.exports.postBook = async function (req, res) {
       i += 1;   console.log('i----',i);
       if (i === 20) { break }
 
-      await page.waitForTimeout(15000);
+      await page.waitForTimeout(5000);
       getDataMain();
+
+      console.log('dataFromAllPages---',dataFromAllPages);
 
       const pageNavBtns = await page.$$('a.a2429-a4');
       console.log('pageNavBtns length--',pageNavBtns.length);
@@ -99,7 +101,6 @@ module.exports.postBook = async function (req, res) {
         await pageNavBtns[1].click();
       }
 
-      console.log('dataFromAllPages---',dataFromAllPages);
 
       try {
         await page.waitForTimeout(2000);

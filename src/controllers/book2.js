@@ -172,7 +172,7 @@ module.exports.postBook = async function (req, res) {
       };
 
       let isItLastPage = await page.evaluate(() => {
-        const aTagParentDiv =  document.querySelectorAll('.qe3');
+        const aTagParentDiv =  document.querySelectorAll('.eq7');
         if ( aTagParentDiv[aTagParentDiv.length - 1].firstChild.tagName === 'BUTTON'  ) {
           return true
         }
