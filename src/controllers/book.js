@@ -39,14 +39,13 @@ module.exports.postBook = async function (req, res) {
 
     var i = 0;
 
-    const getDataMain = async () => {  console.log('getDataMain');
-
+    const getDataMain = async () => {  
+      
       await page.waitForTimeout(2000);
       const getDataFromPage = await page.evaluate(() => {
 
         //const allBonusSpans = document.querySelectorAll('.b410-b0.tsBodyControl400Small');
         const allBonusSpans = document.querySelectorAll('.jj3 .b411-b div');
-        alert(allBonusSpans[0])
         let hrefArr = [];
         let linksArr = [];
         let singleProductData = {};
@@ -89,13 +88,14 @@ module.exports.postBook = async function (req, res) {
       if (i === 20) { break }
 
       await page.waitForTimeout(5000);
-      getDataMain();
+      await getDataMain();
 
       console.log('dataFromAllPages---',dataFromAllPages);
 
       const pageNavBtns = await page.$$('a.a2429-a4');
       console.log('pageNavBtns length--',pageNavBtns.length);
       if (pageNavBtns.length === 2 || pageNavBtns.length === 1) {
+        console.log('bevor await pageNavBtns[0].click');
         await pageNavBtns[0].click();
       } else {
         await pageNavBtns[1].click();
