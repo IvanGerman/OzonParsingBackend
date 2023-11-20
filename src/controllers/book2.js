@@ -69,7 +69,17 @@ module.exports.postBook = async function (req, res) {
             const singlePageBonusDivsData = [];
             let singleProductData = {};
 
-            const items = document.querySelectorAll('#paginatorContent .b411-b0.tsBodyControl400Small');
+            const itemsParent = document.querySelector('body').firstChild.firstChild.firstChild.children.item(2).children.item(1).children.item(1).children.item(6).children.item(0).firstChild.firstChild;
+            const allSections = itemsParent. querySelectorAll('section');
+            const allBonusDivs = [];
+            allSections.forEach((section) => {
+              let bonusDiv = section.firstChild.firstChild.firstChild.children.item(1);
+              allBonusDivs.push(bonusDiv);
+            })
+            
+            const items = [...allBonusDivs];
+            //const items = document.querySelectorAll('#paginatorContent .b411-b0.tsBodyControl400Small');
+
             singlePageData222 = Array.from(items);
             //have to take all attribute data from html elements bevor converting through Array.from
             Array.from(items).forEach(bonusSpan => {

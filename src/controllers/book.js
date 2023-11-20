@@ -26,13 +26,13 @@ module.exports.postBook = async function (req, res) {
     const page = await browser.newPage();
 
 
-    await page.goto('https://www.ozon.ru/brand/natura-spa-100790981/', {
-      waitUntil: 'load'
-    });
-    
-    // await page.goto('https://www.ozon.ru/brand/soul-way-100258413/', {
+    // await page.goto('https://www.ozon.ru/brand/natura-spa-100790981/', {
     //   waitUntil: 'load'
     // });
+    
+    await page.goto('https://www.ozon.ru/category/parfyumeriya-6662/?category_was_predicted=true&currency_price=88.000%3B333.000&deny_category_prediction=true&from_global=true&text=%D0%B4%D1%83%D1%85%D0%B8+%D0%BC%D1%83%D0%B6%D1%81%D0%BA%D0%B8%D0%B5&tf_state=Yg1PYF6IJcpJ5_q6uDXHrxPAKeOIhd7HqGJPB5sqoY6ASlxlPiNvbpBdpATTHRM4N5QtjSgeSzYv5ym6xda3exSf8HUMnisOKyfj87ePdjbS0Q%3D%3D', {
+      waitUntil: 'load'
+    });
 
     // const html = await page.content()
     // console.log('html---',html)
@@ -85,7 +85,7 @@ module.exports.postBook = async function (req, res) {
     while (true) {
 
       i += 1;   console.log('i----',i);
-      if (i === 20) { break }
+      if (i === 33) { break }
 
       await page.waitForTimeout(5000);
       await getDataMain();
