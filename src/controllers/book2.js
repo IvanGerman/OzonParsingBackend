@@ -33,7 +33,7 @@ module.exports.postBook = async function (req, res) {
     //   waitUntil: 'load'
     // });
 
-    await page.goto('https://www.ozon.ru/highlight/bally-za-otzyv-1171518/?currency_price=1.000%3B120.000', {
+    await page.goto('https://www.ozon.ru/highlight/bally-za-otzyv-1171518/?currency_price=1.000%3B110.000', {
       waitUntil: 'load'
     });
 
@@ -78,9 +78,9 @@ module.exports.postBook = async function (req, res) {
             })
             
             const items = [...allBonusDivs];
+            
+            //old way of element selecting
             //const items = document.querySelectorAll('#paginatorContent .b411-b0.tsBodyControl400Small');
-
-            singlePageData222 = Array.from(items);
             //have to take all attribute data from html elements bevor converting through Array.from
             Array.from(items).forEach(bonusSpan => {
               if (bonusSpan.innerText.includes('за отзыв')) {
@@ -138,7 +138,7 @@ module.exports.postBook = async function (req, res) {
        //here we take items which bonusValue is bigger than the price of the item
        const goldenItems = [];
        dataFromAllPages.forEach((item) => {
-         if (item.bonusValue - 10 > item.productPrice) {
+         if (item.bonusValue - 80 > item.productPrice) {
            goldenItems.push(item);
          };
        });
@@ -157,7 +157,7 @@ module.exports.postBook = async function (req, res) {
         return 0;
       };
       goldenItems.sort(compare);
-
+        console.log('goldenItems.length---',goldenItems.length);
        fs.writeFileSync('LikvidationGoldenItemsResult.json', JSON.stringify(goldenItems, null, 2), (err) => {
          if (err) { throw err };
          console.log('LikvidationGoldenItemsResult.json saved');
@@ -167,7 +167,7 @@ module.exports.postBook = async function (req, res) {
 
     while (true) {
 
-      await page.waitForTimeout(5000);
+      await page.waitForTimeout(25000);
       i += 1; console.log('i-------', i);
 
       if (i === 8) {
