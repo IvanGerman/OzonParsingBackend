@@ -83,7 +83,7 @@ module.exports.postBook = async function (req, res) {
             //const items = document.querySelectorAll('#paginatorContent .b411-b0.tsBodyControl400Small');
             //have to take all attribute data from html elements bevor converting through Array.from
             Array.from(items).forEach(bonusSpan => {
-              if (bonusSpan.innerText.includes('за отзыв')) {
+              if (bonusSpan.innerText.includes('отзыв')) {
 
                 let linkToProduct = bonusSpan.closest('a');
                 singleProductData.linkToProduct = `ozon.ru${linkToProduct.getAttribute("href")}`;
@@ -129,19 +129,24 @@ module.exports.postBook = async function (req, res) {
 
       console.log('We should be at the bottom of the infinity scroll! Congratulation!');
       console.log(`${numberOfScrolls} scrolls were needed to load all results!`);
+      //to watch here what we return from each page
       return singlePageData
     };
 
     let i = 0;
 
-    const breakInfiniteCycle = () => {
+    const breakInfiniteCycle = () => { 
        //here we take items which bonusValue is bigger than the price of the item
        const goldenItems = [];
-       dataFromAllPages.forEach((item) => {
-         if (item.bonusValue - 80 > item.productPrice) {
+       dataFromAllPages.forEach((item, index) => {
+        console.log('item.bonusValue--',item.bonusValue,'  ---', index);
+        console.log('item.productPrice--',item.productPrice,'  ---', index);
+         if (item.bonusValue - 40 > item.productPrice) {
            goldenItems.push(item);
          };
-       });
+         //goldenItems.push(item);
+       });   console.log('dataFromAllPages--',dataFromAllPages.length);
+             console.log('goldenItems--',goldenItems.length);
        //sorting goldenItems in order of items with biggest positive difference between bonusValue and price at start (descending order)
        goldenItems.forEach((item) => {
         let difference = item.bonusValue - item.productPrice;
@@ -167,7 +172,7 @@ module.exports.postBook = async function (req, res) {
 
     while (true) {
 
-      await page.waitForTimeout(25000);
+      await page.waitForTimeout(5000);
       i += 1; console.log('i-------', i);
 
       if (i === 8) {
