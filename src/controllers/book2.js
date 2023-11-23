@@ -69,18 +69,20 @@ module.exports.postBook = async function (req, res) {
             const singlePageBonusDivsData = [];
             let singleProductData = {};
 
-            const itemsParent = document.querySelector('body').firstChild.firstChild.firstChild.children.item(2).children.item(1).children.item(1).children.item(6).children.item(0).firstChild.firstChild;
-            const allSections = itemsParent. querySelectorAll('section');
-            const allBonusDivs = [];
-            allSections.forEach((section) => {
-              let bonusDiv = section.firstChild.firstChild.firstChild.children.item(1);
-              allBonusDivs.push(bonusDiv);
-            })
+            //---------DOM-structure way of element selecting
+            // const itemsParent = document.querySelector('body').firstChild.firstChild.firstChild.children.item(2).children.item(1).children.item(1).children.item(6).children.item(0).firstChild.firstChild;
+            // const allSections = itemsParent.querySelectorAll('section');
+            // const allBonusDivs = [];
+            // allSections.forEach((section) => {
+            //   let bonusDiv = section.firstChild.firstChild.firstChild.children.item(1);
+            //   allBonusDivs.push(bonusDiv);
+            // })
+            // const items = [...allBonusDivs];
+            // alert(items.length)
+
             
-            const items = [...allBonusDivs];
-            
-            //old way of element selecting
-            //const items = document.querySelectorAll('#paginatorContent .b411-b0.tsBodyControl400Small');
+            //usual way of element selecting
+            const items = document.querySelectorAll('#paginatorContent .b411-b0.tsBodyControl400Small');
             //have to take all attribute data from html elements bevor converting through Array.from
             Array.from(items).forEach(bonusSpan => {
               if (bonusSpan.innerText.includes('отзыв')) {
@@ -139,8 +141,8 @@ module.exports.postBook = async function (req, res) {
        //here we take items which bonusValue is bigger than the price of the item
        const goldenItems = [];
        dataFromAllPages.forEach((item, index) => {
-        console.log('item.bonusValue--',item.bonusValue,'  ---', index);
-        console.log('item.productPrice--',item.productPrice,'  ---', index);
+        // console.log('item.bonusValue--',item.bonusValue,'  ---', index);
+        // console.log('item.productPrice--',item.productPrice,'  ---', index);
          if (item.bonusValue - 40 > item.productPrice) {
            goldenItems.push(item);
          };
@@ -182,6 +184,7 @@ module.exports.postBook = async function (req, res) {
 
       
       let singlePageData2 = await doInfiniteScroll(page);
+      //console.log('singlePageData2--', singlePageData2, singlePageData2.length);
       if (singlePageData2 !== undefined) {
         dataFromAllPages.push(...singlePageData2);
       };
