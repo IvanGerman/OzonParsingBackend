@@ -165,6 +165,8 @@ module.exports.postBook = async function (req, res) {
       };
       goldenItems.sort(compare);
         console.log('goldenItems.length---',goldenItems.length);
+        //here to send response data to the client
+        res.send(goldenItems);
        fs.writeFileSync('LikvidationGoldenItemsResult.json', JSON.stringify(goldenItems, null, 2), (err) => {
          if (err) { throw err };
          console.log('LikvidationGoldenItemsResult.json saved');
