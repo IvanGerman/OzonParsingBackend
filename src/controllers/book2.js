@@ -33,7 +33,7 @@ module.exports.postBook = async function (req, res) {
     //   waitUntil: 'load'
     // });
 
-    await page.goto('https://www.ozon.ru/highlight/bally-za-otzyv-1171518/?currency_price=1.000%3B110.000', {
+    await page.goto('https://www.ozon.ru/highlight/bally-za-otzyv-1171518/?currency_price=1.000%3B120.000', {
       waitUntil: 'load'
     });
 
@@ -192,7 +192,7 @@ module.exports.postBook = async function (req, res) {
       };
 
       let isItLastPage = await page.evaluate(() => {
-        const aTagParentDiv =  document.querySelectorAll('.eq7');
+        const aTagParentDiv =  document.querySelectorAll('.n6e');
         if ( aTagParentDiv[aTagParentDiv.length - 1].firstChild.tagName === 'BUTTON'  ) {
           return true
         }
