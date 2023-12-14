@@ -60,7 +60,8 @@ module.exports.postBook = async function (req, res) {
 
       while (numberOfTrials < MAXIMUM_NUMBER_OF_TRIALS && !manualStop) {
         let aaa = await page.evaluate(() => {
-          const itemsss = document.querySelectorAll('a.a2429-a4');
+          //const itemsss = document.querySelectorAll('a.a2429-a4');
+          const itemsss = document.querySelectorAll('a.o3e');
           return itemsss
         }); console.log('aaa----', Boolean(aaa[0]));
         if (aaa[0]) {
@@ -82,7 +83,7 @@ module.exports.postBook = async function (req, res) {
 
             
             //usual way of element selecting
-            const items = document.querySelectorAll('#paginatorContent .b411-b0.tsBodyControl400Small');
+            const items = document.querySelectorAll('#paginatorContent .b415-b0.tsBodyControl400Small');
             //have to take all attribute data from html elements bevor converting through Array.from
             Array.from(items).forEach(bonusSpan => {
               if (bonusSpan.innerText.includes('отзыв')) {
@@ -192,7 +193,7 @@ module.exports.postBook = async function (req, res) {
       };
 
       let isItLastPage = await page.evaluate(() => {
-        const aTagParentDiv =  document.querySelectorAll('.n6e');
+        const aTagParentDiv =  document.querySelectorAll('.oe7'); //here to adapt to a changed dom-structure
         if ( aTagParentDiv[aTagParentDiv.length - 1].firstChild.tagName === 'BUTTON'  ) {
           return true
         }
@@ -206,7 +207,8 @@ module.exports.postBook = async function (req, res) {
       }
       console.log(`All done`)     
       
-      const pageNavBtns = await page.$$('a.a2429-a4');
+      //const pageNavBtns = await page.$$('a.a2429-a4');
+      const pageNavBtns = await page.$$('a.o3e');
 
       if (pageNavBtns.length === 1) {
         await pageNavBtns[0].click();
