@@ -33,7 +33,7 @@ module.exports.postBook = async function (req, res) {
     //   waitUntil: 'load'
     // });
 
-    await page.goto('https://www.ozon.ru/highlight/bally-za-otzyv-1171518/?currency_price=1.000%3B120.000', {
+    await page.goto('https://www.ozon.ru/highlight/bally-za-otzyv-1171518/?currency_price=1.000%3B140.000', {
       waitUntil: 'load'
     });
 
@@ -61,7 +61,7 @@ module.exports.postBook = async function (req, res) {
       while (numberOfTrials < MAXIMUM_NUMBER_OF_TRIALS && !manualStop) {
         let aaa = await page.evaluate(() => {
           //const itemsss = document.querySelectorAll('a.a2429-a4');
-          const itemsss = document.querySelectorAll('a.o3e');
+          const itemsss = document.querySelectorAll('a.e3o');
           return itemsss
         }); console.log('aaa----', Boolean(aaa[0]));
         if (aaa[0]) {
@@ -193,8 +193,8 @@ module.exports.postBook = async function (req, res) {
       };
 
       let isItLastPage = await page.evaluate(() => {
-        const aTagParentDiv =  document.querySelectorAll('.oe7'); //here to adapt to a changed dom-structure
-        if ( aTagParentDiv[aTagParentDiv.length - 1].firstChild.tagName === 'BUTTON'  ) {
+        const aTagParentDiv =  document.querySelectorAll('.eo7'); //here to adapt to a changed dom-structure
+        if ( aTagParentDiv[aTagParentDiv.length - 1].lastChild.tagName === 'BUTTON'  ) {
           return true
         }
         return false;
@@ -208,7 +208,7 @@ module.exports.postBook = async function (req, res) {
       console.log(`All done`)     
       
       //const pageNavBtns = await page.$$('a.a2429-a4');
-      const pageNavBtns = await page.$$('a.o3e');
+      const pageNavBtns = await page.$$('a.e3o');
 
       if (pageNavBtns.length === 1) {
         await pageNavBtns[0].click();
