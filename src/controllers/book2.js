@@ -33,7 +33,7 @@ module.exports.postBook = async function (req, res) {
     //   waitUntil: 'load'
     // });
 
-    await page.goto('https://www.ozon.ru/highlight/bally-za-otzyv-1171518/?currency_price=1.000%3B140.000', {
+    await page.goto('https://www.ozon.ru/highlight/bally-za-otzyv-1171518/?currency_price=1.000%3B120.000', {
       waitUntil: 'load'
     });
 
@@ -61,7 +61,7 @@ module.exports.postBook = async function (req, res) {
       while (numberOfTrials < MAXIMUM_NUMBER_OF_TRIALS && !manualStop) {
         let aaa = await page.evaluate(() => {
           //const itemsss = document.querySelectorAll('a.a2429-a4');
-          const itemsss = document.querySelectorAll('a.e3o');
+          const itemsss = document.querySelectorAll('a.ep0');
           return itemsss
         }); console.log('aaa----', Boolean(aaa[0]));
         if (aaa[0]) {
@@ -83,13 +83,14 @@ module.exports.postBook = async function (req, res) {
 
             
             //usual way of element selecting
-            const items = document.querySelectorAll('#paginatorContent .b415-b0.tsBodyControl400Small');
+            const items = document.querySelectorAll('#paginatorContent .b418-b0.tsBodyControl400Small');
             //have to take all attribute data from html elements bevor converting through Array.from
             Array.from(items).forEach(bonusSpan => {
               if (bonusSpan.innerText.includes('отзыв')) {
 
                 let linkToProduct = bonusSpan.closest('a');
                 singleProductData.linkToProduct = `ozon.ru${linkToProduct.getAttribute("href")}`;
+                //here producttitle bug to fix
                 let productTitle = linkToProduct.nextElementSibling.children[2].firstChild.firstChild.innerText;
                 singleProductData.productTitle = productTitle;
                 let productPrice = linkToProduct.nextElementSibling.firstChild.firstChild.firstChild.innerText;
@@ -193,7 +194,7 @@ module.exports.postBook = async function (req, res) {
       };
 
       let isItLastPage = await page.evaluate(() => {
-        const aTagParentDiv =  document.querySelectorAll('.eo7'); //here to adapt to a changed dom-structure
+        const aTagParentDiv =  document.querySelectorAll('.p3e'); //here to adapt to a changed dom-structure
         if ( aTagParentDiv[aTagParentDiv.length - 1].lastChild.tagName === 'BUTTON'  ) {
           return true
         }
@@ -208,7 +209,7 @@ module.exports.postBook = async function (req, res) {
       console.log(`All done`)     
       
       //const pageNavBtns = await page.$$('a.a2429-a4');
-      const pageNavBtns = await page.$$('a.e3o');
+      const pageNavBtns = await page.$$('a.ep0');
 
       if (pageNavBtns.length === 1) {
         await pageNavBtns[0].click();
