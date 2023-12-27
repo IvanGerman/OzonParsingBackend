@@ -90,8 +90,7 @@ module.exports.postBook = async function (req, res) {
 
                 let linkToProduct = bonusSpan.closest('a');
                 singleProductData.linkToProduct = `ozon.ru${linkToProduct.getAttribute("href")}`;
-                //here producttitle bug to fix
-                let productTitle = linkToProduct.nextElementSibling.children[2].firstChild.firstChild.innerText;
+                let productTitle = linkToProduct.nextElementSibling.querySelector('.tsBody500Medium').innerText;
                 singleProductData.productTitle = productTitle;
                 let productPrice = linkToProduct.nextElementSibling.firstChild.firstChild.firstChild.innerText;
                 productPrice = productPrice.replace(/\s+/g, '');
