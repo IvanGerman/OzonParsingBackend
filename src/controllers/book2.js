@@ -159,10 +159,10 @@ module.exports.postBook = async function (req, res) {
       });
       let compare = (a, b) => {
         if (a.difference < b.difference) {
-            return -1;
+            return 1;
         }
         if (a.difference > b.difference) {
-            return 1;
+            return -1;
         }
         return 0;
       };
