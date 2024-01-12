@@ -33,7 +33,7 @@ module.exports.postBook = async function (req, res) {
     //   waitUntil: 'load'
     // });
 
-    await page.goto('https://www.ozon.ru/highlight/bally-za-otzyv-1171518/?currency_price=1.000%3B120.000', {
+    await page.goto('https://www.ozon.ru/highlight/bally-za-otzyv-1171518/?currency_price=1.000%3B130.000', {
       waitUntil: 'load'
     });
 
@@ -61,7 +61,8 @@ module.exports.postBook = async function (req, res) {
       while (numberOfTrials < MAXIMUM_NUMBER_OF_TRIALS && !manualStop) {
         let aaa = await page.evaluate(() => {
           //const itemsss = document.querySelectorAll('a.a2429-a4');
-          const itemsss = document.querySelectorAll('a.ep0');
+          // ++++++++ these are 'dalshe' a-tag buttons
+          const itemsss = document.querySelectorAll('a.e0p');
           return itemsss
         }); console.log('aaa----', Boolean(aaa[0]));
         if (aaa[0]) {
@@ -83,7 +84,8 @@ module.exports.postBook = async function (req, res) {
 
             
             //usual way of element selecting
-            const items = document.querySelectorAll('#paginatorContent .b418-b0.tsBodyControl400Small');
+            // ++++++++++ items - these are divs with bonus description in them
+            const items = document.querySelectorAll('#paginatorContent .b419-b0.tsBodyControl400Small');
             //have to take all attribute data from html elements bevor converting through Array.from
             Array.from(items).forEach(bonusSpan => {
               if (bonusSpan.innerText.includes('отзыв')) {
@@ -210,7 +212,8 @@ module.exports.postBook = async function (req, res) {
       console.log(`All done`)     
       
       //const pageNavBtns = await page.$$('a.a2429-a4');
-      const pageNavBtns = await page.$$('a.ep0');
+      // ++++++++ these are 'dalshe' a-tag buttons
+      const pageNavBtns = await page.$$('a.e0p');
 
       if (pageNavBtns.length === 1) {
         await pageNavBtns[0].click();
