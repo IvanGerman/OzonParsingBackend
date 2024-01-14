@@ -62,7 +62,7 @@ module.exports.postBook = async function (req, res) {
         let aaa = await page.evaluate(() => {
           //const itemsss = document.querySelectorAll('a.a2429-a4');
           // ++++++++ these are 'dalshe' a-tag buttons
-          const itemsss = document.querySelectorAll('a.e0p');
+          const itemsss = document.querySelectorAll('a.p0e');
           return itemsss
         }); console.log('aaa----', Boolean(aaa[0]));
         if (aaa[0]) {
@@ -197,7 +197,7 @@ module.exports.postBook = async function (req, res) {
       };
 
       let isItLastPage = await page.evaluate(() => {
-        const aTagParentDiv =  document.querySelectorAll('.p3e'); //here to adapt to a changed dom-structure
+        const aTagParentDiv =  document.querySelectorAll('.pe4'); //here to adapt to a changed dom-structure
         if ( aTagParentDiv[aTagParentDiv.length - 1].lastChild.tagName === 'BUTTON'  ) {
           return true
         }
@@ -213,7 +213,7 @@ module.exports.postBook = async function (req, res) {
       
       //const pageNavBtns = await page.$$('a.a2429-a4');
       // ++++++++ these are 'dalshe' a-tag buttons
-      const pageNavBtns = await page.$$('a.e0p');
+      const pageNavBtns = await page.$$('a.p0e');
 
       if (pageNavBtns.length === 1) {
         await pageNavBtns[0].click();
